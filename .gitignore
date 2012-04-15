@@ -38,6 +38,7 @@ intermediate
 publish
 .idea
 node_modules
+docs
 
 # build script local files
 build/buildinfo.properties
