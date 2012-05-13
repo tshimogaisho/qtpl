@@ -16,11 +16,10 @@ jQuery.fn.treewrapper = function(method){
 	}else if( typeof method === 'object' || !method ){
 		return methods.init.apply( this, arguments );
 	}else{
-		jQuery.error( 'Method '+method+' does not exist.' );
+		jQuery.error( 'Method ' + method+ ' does not exist.' );
 	}
 	
 	function getjson(){
-		console.log(that);
 		return that.jstree("get_json");
 	}
 	

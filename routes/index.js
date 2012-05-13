@@ -4,4 +4,6 @@ exports.index = function(req, res){
 };
 
 exports.user = require("./user").user;
+exports.tree = require("./tree").tree;
+
 exports.testtpls = require("./testtpls").testtpls;

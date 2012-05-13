@@ -10,7 +10,18 @@ $(function(){
 			console.log("file_created");
 		})
 		.on("node_changed.treewrapper", function(e, data){
-			console.log(JSON.stringify(treecontainer.treewrapper("getjson")));
+			var jsonstring = JSON.stringify(treecontainer.treewrapper("getjson"));
+			$.ajax({
+				type : "PUT",
+				url : "/gaisho/tree",
+				async: true,
+				contentType : "application/json; charset=utf-8",
+				data : jsonstring,
+				success : function(){},
+				error : function(xhr){
+					console.log("http request failure.");
+				}
+			});
 		})
 		;
 	var view1 = $("#tpl-view").tmpl(["test"]);
@@ -75,12 +86,6 @@ $(function(){
 	
 	$("#tpl-container").draggableWrapper();
 
-	        	
-	
-	
-	
-	
-	
 	
 });
 
