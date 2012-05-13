@@ -1,10 +1,46 @@
 <!DOCTYPE html>
 <html>
   <head>
+  	<meta charset="utf-8">
     <title><%= title %></title>
-    <link rel='stylesheet' href='/css/style.css' />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="T.Gasho">
+    
+    <link rel='stylesheet' href='/css/bootstrap.css' />
+    
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script>window.jQuery || document.write('<script src="jquery-1.7.2.min.js"><\/script>')</script>
+	
+	<%
+	var resourcename = resourcename || null;
+	if(resourcename){%>
+		<%- partial('resource_' + resourcename) %>
+	<%} %>
+	
+    
+    <style>
+      html {
+      	height: 100%; margin:0;
+      }
+      body {
+      	padding: 0;
+        height: 87%;
+        font-family: 'Lucida Grande', 'Lucida Sans Unicode', sans-serif;
+        font-size: 14px;
+      }
+    </style>    
+    
   </head>
   <body>
-    <%- body %>
+  	<div style="min-height: 100%; padding: 50px 30px 0px 30px;">
+  		<div style="padding-bottom: 30px;">
+			<%- partial('navbar') %>
+		    <%- body %>
+    	</div>
+    </div>
+    <div style="position: relative; margin-top: -30px; height: 30px; clear: both;">
+    <%- partial('footer') %>
+    </div>
   </body>
 </html>

@@ -1,0 +1,326 @@
+
+
+.tpl-view{
+    width : 360px;
+    min-width: 340px;
+    min-height: 320px;
+    border : solid 3px #5C96D2;
+    position : relative;
+    top: 10px; left : 10px;
+    text-align : center;
+    padding: 0 0 10px 0;
+    margin: 5px 0;
+}
+
+.tpl-view select{
+	width: 140px;
+	height: 1.5em;
+}
+
+.tpl-view ul{
+	list-style-type : none;
+}
+
+.tpl-view input[type="text"]{
+	margin: 0;
+	height: 1em;
+}
+
+
+.tpl-view .header{
+    border-top-left-radius: 5px 5px;
+    border-top-right-radius: 5px 5px;
+    cursor: pointer;
+}
+
+.tpl-view .view_header{
+    position: relative;
+    margin: 5px 15px;
+    text-align: right;
+    font-size: 0.9em;
+}
+
+.tpl-view .note{
+    float: right;
+}
+
+.tpl-view .edit{
+    float: left;
+}
+
+.tpl-view .link{
+    color:#468CBE;
+    cursor: pointer;
+}
+
+.tpl-view .link:hover{
+    text-decoration: underline;
+}
+
+
+.tpl-view .description_{
+    font-size: 0.7em;
+    border: 1px rgba(230, 230, 160, 1) solid;
+    width: 85%;
+    margin: 5px auto;
+    padding: 5px;
+    text-align: left;
+}
+
+.tpl-view .text{
+    text-align: left;
+    margin: 5px auto;
+    margin-top: 15px;
+    padding: 15px;
+    width: 87%;
+    min-height: 50px;
+    border: solid 1px #5C96D2;
+    background-color: white;
+    font-size: 0.9em;
+    font-family: parent;
+    white-space: -moz-pre-wrap;
+    white-space: -pre-wrap;
+    white-space: -o-pre-wrap;
+    white-space: pre-wrap;
+    word-wrap: break-word;  
+    clear: both;  
+}
+
+.tpl-view .horizon{
+    height: 1px;
+    width: 97%;
+    border-top: solid #5CA0B4 1px;
+    margin: 15px auto 15px auto;
+
+}
+
+.tpl-view .param_area{
+    margin-left: auto;
+    margin-right: auto;
+    
+}
+
+.tpl-view .param_area_header{
+    margin: 0 10px 0 30px;
+    text-align: left;
+}
+
+.tpl-view .param_area_header select{
+    float: left;
+    margin-right: 20px;
+}
+
+.tpl-view .param_area_header div{
+    float: left;
+    font-size: 0.8em;
+    margin-left: 10px;
+}
+
+
+.tpl-view .params{
+    width: 80%;
+    margin: 5px 5px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 10px;
+    border: solid 1px #5CA0B4;
+}
+
+.tpl-view .params li{
+    text-align: left;
+    padding: 2px;
+    clear: both;
+}
+
+.tpl-view .param_name{
+    font-size: 0.8em;
+    text-align: left;
+    float: left;
+    min-width: 60px;
+    width: 90px;
+    height: 1.5em;
+    line-height: 1.5em;
+}
+
+
+.tpl-view .param_value{
+    width: 60%;
+}
+
+.tpl-view .param_area_footer{
+    text-align: right;
+    height: 30px;
+    margin-right: 30px;
+}
+
+
+.tpl-edit{
+    width : 360px;
+    min-width: 250px;
+    border : solid 2px #5C96D2;
+    position : absolute;
+    top: 10px; left : 10px;
+    text-align : center;
+    background-color: rgb(240, 240, 250);
+}
+
+.tpl-edit ul{
+	list-style-type : none;
+}
+
+.tpl-edit textarea{
+	resize: none;
+}
+
+.tpl-edit .header{
+    border-top-left-radius: 5px 5px;
+    border-top-right-radius: 5px 5px;
+    cursor: pointer;
+}
+
+.tpl-edit .edit_form{
+    position: relative;
+    padding: 10px;
+    text-align: left;
+    height : 100%;
+}
+
+.tpl-edit .title_text_wrapper{
+    position: relative;
+    width: 100%;
+    text-align: left;
+}
+
+.tpl-edit .text{
+    position : relative;
+    top: 5px;
+    height: 150px;
+	min-height: 100px;
+	min-width: 220px;
+    font-family: 'Lucida Grande', 'Lucida Sans Unicode', sans-serif;
+    font-size: 0.8em;
+    width: 97%;
+    
+ 
+}
+
+.tpl-edit .title_text{
+    position : relative;
+    width : 220px;
+    min-width: 100px;
+    font-family: 'Lucida Grande', 'Lucida Sans Unicode', sans-serif;
+    font-size: 0.9em;
+    height: 1.2em;
+}
+
+.tpl-edit .link{
+    color:#468CBE;
+    cursor: pointer;
+}
+
+.tpl-edit .note{
+    font-size: 0.8em;
+    text-align: right;
+    margin-top: 5px;
+}
+
+.tpl-edit .note_text{
+    display: none;
+    position : relative;
+    width: 97%;
+    height: 100px;
+    font-family: 'Lucida Grande', 'Lucida Sans Unicode', sans-serif;
+    font-size: 0.8em;
+    
+}
+
+
+.tpl-edit .param_area_header{
+    position : relative;
+    top: 5px;
+}
+
+.tpl-edit .param_area{
+    position : relative;
+    top: 10px;
+    width: 100%;
+    margin-left: 0;
+}
+
+.tpl-edit .param_name_text_wrapper{
+	float: left;
+    height: 35px;
+    width: 70%;
+    min-width: 100px;
+}
+
+.tpl-edit .param_name_text{
+    font-size: 0.8em;
+    line-height: 1.5em;
+    height: 1.5em;
+    margin : 3px;
+    width: 100%;
+    min-width: 100px;
+}
+
+.tpl-edit .bottom{
+    position: relative;
+    top: 10px;
+    clear: both;
+    height: 30px;
+    margin-right: auto;
+    margin-left: auto;
+    text-align: center;
+}
+
+.tpl-edit .corner_rounded1{
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    border-top-left-radius: 10px 10px;
+    border-top-right-radius: 10px 10px;
+    border-bottom-right-radius: 10px 10px;
+    border-bottom-left-radius: 10px 10px;    
+}
+
+.tpl-edit p.ui-state-default {
+    margin: 2px;
+    position: relative;
+    padding: 4px 0;
+    cursor: pointer;
+    float: left;
+}
+.tpl-edit span.ui-icon {
+    float: left;
+    margin: 0 4px;
+}
+
+.tpl-edit .input_error{
+    background-color: pink;
+}
+
+
+
+
+.corner_rounded1{
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    border-top-left-radius: 10px 10px;
+    border-top-right-radius: 10px 10px;
+    border-bottom-right-radius: 10px 10px;
+    border-bottom-left-radius: 10px 10px;    
+}
+
+.corner_rounded2{
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    border-top-left-radius: 3px 3px;
+    border-top-right-radius: 3px 3px;
+    border-bottom-right-radius: 3px 3px;
+    border-bottom-left-radius: 3px 3px;    
+}
+
+
+​

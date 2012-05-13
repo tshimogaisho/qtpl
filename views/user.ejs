@@ -1,0 +1,134 @@
+
+   
+   
+    <div class="container-fluid">
+      <div class="row-fluid">
+      <div class="span4">ABC</div>
+      <div class="span8">DEF</div>
+      </div>
+      <div class="row-fluid">
+        <div class="span3">
+          <div class="well sidebar-nav" style="padding: 5px; min-height: 680px;">
+          	<h3>buttons</h3>
+			<div id="sidebar-body">
+				<input type="text" id="search-text" />
+				<div id="tree-container" style=" overflow: auto; min-height: 600px;font-family: Verdana, sans-serif"></div>
+			</div>
+         </div><!--/.well -->
+        </div><!--/span-->
+        <div class="span9">
+          <div class="hero-unit" style="padding: 5px;">
+          	<div>
+          		<h3>buttons</h3>
+          		<div id="tpl-container" style="overflow: auto; position: relative;padding:5px; height: 650px; border:1px solid rgb(200, 200, 200);">
+          			<div style="height:1500px; width: 0px;"></div>
+          		</div>
+          	</div>
+          </div>	
+ 
+        </div><!--/span-->
+      </div><!--/row-->
+
+
+    </div><!--/.fluid-container-->
+    
+
+<!--tpl view part -->
+<script id="tpl-view" type="text/x-jquery-tmpl">
+<div class="tpl-view corner_rounded1 draggable">
+    <h3 class="ui-widget-header header">
+    	<span class="ui-dialog-title" id="ui-dialog-title-dialog">Dialog Title</span>
+		<a href="#" class="ui-dialog-titlebar-close ui-corner-all" role="button" style="position:absolute; top: 5px; right: 10px;">
+			<span class="ui-icon ui-icon-closethick">close</span>
+		</a>
+    </h3>
+    <div class="view_header">
+        <div class="note link" style="font-size: 0.8em;">ノート</div>       
+        <div class="edit link" style="font-size: 0.8em;">編集</div>    
+    </div>
+
+    <pre class="text corner_rounded2">COPASO is an advanced color palette tool that helps you create the perfect color palette. 
+
+If you're finding COPASO a bit too rich for your color creating tastes, you can always use our basic color palette tool.
+    </pre>
+    
+    <div class="horizon"></div>
+
+    <div class="param_area corner_rounded2">
+        <div class="param_area_header">
+            <select class="param_set">
+            </select>
+            <div class="paramset_save link">保存</div>
+            <div class="param_set_rename link">名前変更</div>
+            <div class="paramset_remove link">削除</div>
+        </div>
+        <ul class="params corner_rounded2" style="clear:both;">
+        </ul>
+
+        <div class="param_area_footer">
+
+<!--
+            <button class="save_paramset ui_button" style="font-size:0.6em;">保存</button>
+            <button class="delete_paramset ui_button" style="font-size:0.6em;">削除</button>
+            <button class="rename_paramset ui_button" style="font-size:0.6em;">名前変更</button>
+-->
+        </div>        
+    </div>
+</div>
+</script>
+
+<!--tplview - param list part -->
+<script id="tplview-param-li" type="text/x-jquery-tmpl">
+<li>
+    <div class="param_name">${name}</div>
+    <input type="text" class="param_value" value="${val}">
+</li>
+</script>
+
+
+<!--tpledit part -->
+<script id="tpl-edit" type="text/x-jquery-tmpl">
+<div class="tpl-edit corner_rounded1 draggable">
+    <h3 class="ui-widget-header header">
+    	<span class="ui-dialog-title" id="ui-dialog-title-dialog">Dialog Title</span>
+		<a href="#" class="ui-dialog-titlebar-close ui-corner-all" role="button" style="position:absolute; top: 5px; right: 10px;">
+			<span class="ui-icon ui-icon-closethick">close</span>
+		</a>
+    </h3>
+    <form class="edit_form">
+        <div class="title_text_wrapper">
+            <input type="text" class="title_text">
+        </div>
+        <textarea class="text"></textarea>
+        <div class="note link">ノート</div>
+        <textarea class="note_text"></textarea>
+
+        <h5 class="ui-widget-header param_area_header" style="font-size: 0.8em;">Params</h5>
+        <ul class="param_area"></ul>
+
+        <div class="bottom">
+            <button class="cancel ui_button" style="font-size: 0.7em; width: 80px;">キャンセル</button>
+            <button class="save ui_button" style="font-size: 0.7em; width: 80px;">保存</button>
+        </div>
+
+    </form>
+</div>
+</script>
+
+<!--tpledit - param list part -->
+<script id="tpledit-param-li" type="text/x-jquery-tmpl">
+    <li style="width: 100%; text-align: left;">
+        <div class="param_name_text_wrapper">
+            <input type="text" class="param_name_text" value="${param_name}">
+        </div>
+        <div style="width: 30%; float: right;">
+            <p class="ui-state-default ui-corner-all" style="position:relative; left:15px;">
+                <span class="remove_param ui-icon ui-icon-circle-minus"></span>
+            </p>
+            <p class="ui-state-default ui-corner-all" style="position:relative; left:15px;">
+                <span class="add_param ui-icon ui-icon-circle-plus"></span>
+            </p>                    
+        </div>
+
+    </li>
+</script>

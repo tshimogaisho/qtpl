@@ -1,0 +1,281 @@
+[
+    {
+        "data": "テンプレート一覧", 
+        "state": "open",
+        "attr" : { "rel" : "root"},
+        "children": [
+            {
+                "children": [
+                    {
+                        "children": [
+                            {
+                                "children": [
+                                    {
+                                        "data": "i"
+                                    }
+                                ], 
+                                "data": "現在のカーソル位置", 
+                                "state": "open"
+                            }, 
+                            {
+                                "children": [
+                                    {
+                                        "data": "a"
+                                    }
+                                ], 
+                                "data": "現在のカーソル位置の一つ後へ", 
+                                "state": "open"
+                            }
+                        ], 
+                        "data": "インサートモードへの切り替え", 
+                        "state": "closed"
+                    }, 
+                    {
+                        "children": [
+                            {
+                                "children": [
+                                    {
+                                        "data": "v"
+                                    }
+                                ], 
+                                "data": "文字単位の範囲選択", 
+                                "state": "open"
+                            }, 
+                            {
+                                "children": [
+                                    {
+                                        "data": "V"
+                                    }
+                                ], 
+                                "data": "行単位の範囲選択", 
+                                "state": "open"
+                            }
+                        ], 
+                        "data": "ビジュアルモードへの切り替え", 
+                        "state": "open"
+                    }, 
+                    {
+                        "children": [
+                            {
+                                "data": "v, V, Ctrl-c"
+                            }
+                        ], 
+                        "data": "ビジュアルモードからノーマルモードへの切り替え", 
+                        "state": "closed"
+                    }, 
+                    {
+                        "children": [
+                            {
+                                "data": "o"
+                            }
+                        ], 
+                        "data": "新規行を挿入してエディットモードへ", 
+                        "state": "open"
+                    }
+                ], 
+                "data": "モード切り替え", 
+                "state": "closed",
+                "attr" : { "rel" : "folder"}
+            }, 
+            {
+                "children": [
+                    {
+                        "children": [
+                            {
+                                "children": [
+                                    {
+                                        "data": "h"
+                                    }
+                                ], 
+                                "data": "左", 
+                                "state": "closed"
+                            }, 
+                            {
+                                "children": [
+                                    {
+                                        "data": "j"
+                                    }
+                                ], 
+                                "data": "下", 
+                                "state": "closed"
+                            }, 
+                            {
+                                "children": [
+                                    {
+                                        "data": "k"
+                                    }
+                                ], 
+                                "data": "上", 
+                                "state": "closed"
+                            }, 
+                            {
+                                "children": [
+                                    {
+                                        "data": "l"
+                                    }
+                                ], 
+                                "data": "右", 
+                                "state": "closed"
+                            }
+                        ], 
+                        "data": "上下左右", 
+                        "state": "closed"
+                    }, 
+                    {
+                        "children": [
+                            {
+                                "children": [
+                                    {
+                                        "data": "w"
+                                    }, 
+                                    {
+                                        "children": [
+                                            {
+                                                "data": "e"
+                                            }
+                                        ], 
+                                        "data": "空行を無視", 
+                                        "state": "closed"
+                                    }
+                                ], 
+                                "data": "前方移動", 
+                                "state": "closed"
+                            }, 
+                            {
+                                "children": [
+                                    {
+                                        "data": "b"
+                                    }
+                                ], 
+                                "data": "後方移動", 
+                                "state": "closed"
+                            }
+                        ], 
+                        "data": "単語単位での移動", 
+                        "state": "closed"
+                    }, 
+                    {
+                        "children": [
+                            {
+                                "children": [
+                                    {
+                                        "data": "(, {"
+                                    }
+                                ], 
+                                "data": "前方", 
+                                "state": "closed"
+                            }, 
+                            {
+                                "children": [
+                                    {
+                                        "data": "), }"
+                                    }
+                                ], 
+                                "data": "後方", 
+                                "state": "closed"
+                            }
+                        ], 
+                        "data": "文・段落単位でのカーソル移動", 
+                        "state": "closed"
+                    }, 
+                    {
+                        "children": [
+                            {
+                                "data": "0 文の行頭に移動"
+                            }, 
+                            {
+                                "data": "$ 文の末尾に移動"
+                            }
+                        ], 
+                        "data": "行頭・末尾", 
+                        "state": "closed"
+                    }, 
+                    {
+                        "children": [
+                            {
+                                "children": [
+                                    {
+                                        "data": "Ctrl + f"
+                                    }
+                                ], 
+                                "data": "後方", 
+                                "state": "open"
+                            }, 
+                            {
+                                "children": [
+                                    {
+                                        "data": "Ctrl + b"
+                                    }
+                                ], 
+                                "data": "前方", 
+                                "state": "open"
+                            }
+                        ], 
+                        "data": "ページ単位での移動", 
+                        "state": "closed"
+                    }, 
+                    {
+                        "children": [
+                            {
+                                "children": [
+                                    {
+                                        "data": "Ctrl - u"
+                                    }
+                                ], 
+                                "data": "後方", 
+                                "state": "closed"
+                            }, 
+                            {
+                                "children": [
+                                    {
+                                        "data": "Ctrl - y"
+                                    }
+                                ], 
+                                "data": "前方", 
+                                "state": "closed"
+                            }
+                        ], 
+                        "data": "カーソル位置固定で1行スクロール", 
+                        "state": "closed"
+                    }, 
+                    {
+                        "children": [
+                            {
+                                "children": [
+                                    {
+                                        "data": "gg"
+                                    }
+                                ], 
+                                "data": "先頭行", 
+                                "state": "closed"
+                            }, 
+                            {
+                                "children": [
+                                    {
+                                        "data": "G"
+                                    }
+                                ], 
+                                "data": "最終行", 
+                                "state": "closed"
+                            }
+                        ], 
+                        "data": "先頭行・末尾", 
+                        "state": "closed"
+                    }, 
+                    {
+                        "children": [
+                            {
+                                "data": "<n>g"
+                            }
+                        ], 
+                        "data": "指定行への移動", 
+                        "state": "closed"
+                    }
+                ], 
+                "data": "カーソルの移動", 
+                "state": "closed",
+                "attr" : { "rel" : "folder"}
+            }
+        ]
+    }
+]

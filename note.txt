@@ -1,0 +1,6 @@
+    <h3 class="ui-widget-header header">
+    	<span class="ui-dialog-title" id="ui-dialog-title-dialog">Dialog Title</span>
+		<a href="#" class="ui-dialog-titlebar-close ui-corner-all" role="button" style="position:absolute; top: 5px; right: 10px;">
+			<span class="ui-icon ui-icon-closethick">close</span>
+		</a>
+    </h3>

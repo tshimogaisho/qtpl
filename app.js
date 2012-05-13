@@ -17,7 +17,9 @@ app.configure(function(){
   app.use(express.methodOverride());
   app.use(app.router);
   app.use(express.static(__dirname + '/public'));
+  
 });
+
 
 app.configure('development', function(){
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
@@ -28,8 +30,11 @@ app.configure('production', function(){
 });
 
 // Routes
+console.log(routes);
 
 app.get('/', routes.index);
+app.get('/:userid/testtpls', routes.testtpls);
+app.get('/:userid', routes.user);
 
 var port = process.env.PORT || 3000;
 app.listen(port);

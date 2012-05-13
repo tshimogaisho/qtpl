@@ -3,7 +3,7 @@
 
 
 /* TEAM */
-  <your title>: <your name>
+  <your title>: Gaisho
   Site:
   Twitter:
   Location:
