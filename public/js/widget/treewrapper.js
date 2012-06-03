@@ -8,7 +8,8 @@ jQuery.fn.treewrapper = function(method){
 	
 	var methods = {
 		init : init,
-		getjson : getjson
+		getjson : getjson,
+		renameNode : renameNode
 	};
 	
 	if( methods[method] ){
@@ -20,7 +21,11 @@ jQuery.fn.treewrapper = function(method){
 	}
 	
 	function getjson(){
-		return that.jstree("get_json");
+		return that.jstree( "get_json", -1, ["id", "class", "nid"] );
+	}
+	
+	function renameNode(nid, titleText){
+		that.jstree("rename_node", that.find("[nid='"+ nid +"']"), titleText);
 	}
 	
 	function init(options){
@@ -53,8 +58,13 @@ jQuery.fn.treewrapper = function(method){
 				that.trigger( _getNodeType(data) +"_created" + eventSuffix, data);
 			});
 			
+			that.on("remove.jstree", function(e, data){
+				that.trigger( _getNodeType(data) +"_removed" + eventSuffix, 
+						{ nid: $(data.rslt.obj[0]).attr("nid") } );
+			});
+			
 			var eventNames = 
-				["remove.jstree", "rename.jstree", 
+				["remove.jstree",  "rename.jstree", "rename_node.jstree",
 				 "node_created.jstree", "move_node.jstree"];
 			console.log("eventNames: ", eventNames.join(" "));
 			that.on(eventNames.join(" "), function(e, data){
@@ -96,7 +106,7 @@ jQuery.fn.treewrapper = function(method){
 				},
 				"json_data" : {
 					"ajax" : {
-						"url" : "/gaisho/testtpls",
+						"url" : settings.initialJsonDataUrl,
 					}
 				},
 				"dnd" : {
@@ -139,7 +149,6 @@ jQuery.fn.treewrapper = function(method){
 							"action"			: function (obj) { this.rename(obj); }
 						},
 						"remove" : {
-							"separator_before"	: true,
 							"icon"				: false,
 							"separator_after"	: false,
 							"label"				: "削除",
@@ -170,7 +179,6 @@ jQuery.fn.treewrapper = function(method){
 							"action"			: function (obj) { this.open_all(obj); }
 						},
 						"close_all" : {
-							"separator_before"	: true,
 							"icon"				: false,
 							"label"				: "全て閉じる",
 							"action"			: function (obj) { this.close_all(obj); }

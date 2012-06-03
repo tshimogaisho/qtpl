@@ -31,6 +31,15 @@ app.configure('development', function(){
 		  new mongodb.Server("127.0.0.1", 27017, {}), {});
 });
 
+mongoclient.open(function( err, client){
+	if(err){
+		console.log(err);
+	}else{
+		console.log("connected to mongodb");
+	}
+	
+});
+
 app.configure('production', function(){
   app.use(express.errorHandler());
 //  mongoclient = new mongodb.Server("localhost", 27017, {});
@@ -41,7 +50,11 @@ app.configure('production', function(){
 app.get('/', routes.index);
 app.get('/:userid/testtpls', routes.testtpls);
 app.get('/:userid', routes.user(mongoclient));
-app.put('/:userid/tree', routes.tree(mongoclient));
+app.get('/:userid/tree', routes.tree("get", mongoclient));
+app.put('/:userid/tree', routes.tree("put", mongoclient));
+app.put('/:userid/tpl/:nid', routes.tpl("put", mongoclient));
+app.delete('/:userid/tpl/:nid', routes.tpl("delete", mongoclient));
+
 
 var port = process.env.PORT || 3000;
 app.listen(port);

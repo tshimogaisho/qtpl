@@ -1351,6 +1351,9 @@
 					if(!skip_rename) { 
 						this._show_input(t, function (obj, new_name, old_name) { 
 							_this.__callback({ "obj" : obj, "name" : new_name, "parent" : p, "position" : pos });
+							//gaisho added
+							console.log("jstree obj:", obj);
+							obj[0].newname = new_name;
 							_this.get_container().triggerHandler('node_created.jstree', obj);
 						});
 					}

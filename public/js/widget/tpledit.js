@@ -1,8 +1,14 @@
 (function(jQuery) {
 jQuery.fn.tpledit = function(prop){        
         var that = this;
-        var defaultOption = {title: "", text: "", note: "", params : [""]};
+        var my = {};
+        var defaultOption = {
+        		title: "", text: "", note: "", params : [""],
+        		onsave: function(){}
+        };
     	prop = $.extend(defaultOption, prop);
+    	
+    	this.attr("nid", prop.nid);
 
     	var text = this.find(".text");
     	var textMinHeight = parseInt(text.css("min-height").replace("px", ""));
@@ -17,6 +23,31 @@ jQuery.fn.tpledit = function(prop){
         
         _setButtons();
         _setEvents();
+                
+        this.getdata = function(){
+        	return {
+        		title_text: that.find(".title_text").val(),
+        		text: that.find(".text").val(),
+        		note_text: that.find(".note_text").val(),
+        		params: ( function(){
+	        			var params = [];
+	        			that.find(".param_name_text").each(function(i, v){
+	        				var x = $(v).val().trim();
+	        				if(x !== ""){
+	        					params.push(x);
+	        				}
+	        			});
+        				return params;
+        			} )()
+        	}
+        };
+        
+        this.save = function(){
+        	var data = that.getdata();
+        	console.log("tpldata:",data);
+            prop.onsave(jQuery.extend(data, {nid: that.attr("nid")}));
+            that.trigger("onsaved.tpledit", data);
+        }
         
         function _setLayout(){
             if(prop.width){
@@ -57,7 +88,6 @@ jQuery.fn.tpledit = function(prop){
                 that.find(".cancel").bind("click", function(e){prop.oncancel(e); return false;});
             }
             that.find(".save").bind("click", _save);
-            
             that.find(".cancel").bind("click", function(e){
                 that.trigger("oncancel");
                 return false;
@@ -194,8 +224,31 @@ jQuery.fn.tpledit = function(prop){
             );
         };
         
+        
         function _save(e){
+        	try{
+	            if( ! _inputErrorCheck() ){
+	                return false;
+	            }       			
+        		
+        		that.save();
+	            return false;
 
+        	}catch(e){
+        		console.error(e);
+        		return false;
+        	}
+        }
+        
+        function _addInputErrorClass(target){
+            target.addClass("input_error");
+            target.focus();
+            setTimeout(function(){
+                target.removeClass("input_error");
+            }, 3000)
+        }        
+        
+    	function _inputErrorCheck(){
             var errorExist = false;
             
             var titleText = that.find(".title_text");
@@ -225,28 +278,13 @@ jQuery.fn.tpledit = function(prop){
                         errorExist = true;
                     }
             });
-            
-            
-            if(errorExist){
-                return false;
-            }
-            
-            that.trigger("onsave");
-
-            return false;
+            console.log(errorExist);
+            return !	errorExist;
             
             function _checkTextLength(txt, len){
                 return txt.length <= len;
             }
-            
-            function _addInputErrorClass(target){
-                target.addClass("input_error");
-                target.focus();
-                setTimeout(function(){
-                    target.removeClass("input_error");
-                }, 3000)
-            }
-        }        
+    	}        
         
         
     }
