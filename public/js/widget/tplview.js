@@ -1,21 +1,73 @@
 (function(jQuery) {
-jQuery.fn.tplview = function(option){
+jQuery.fn.tplview = function(method){
     var that = this;
-    option = option || {};
-    this.option = option;
     
-    this.resizable();
-    this.find(".text").resizable();
-    
-    _setButtons();
-    _setTextValues();
-    _createNote();
-    _createParamArea();
-    _setEvents();
-
+    var my = my || {};
         
-    return this;
+    var methods = {
+    		init : init,
+    }
     
+	if( methods[method] ){
+		return methods[method].apply( this, Array.prototype.slice.call( arguments, 1));
+	}else if( typeof method === 'object' || !method ){
+		return methods.init.apply( this, arguments );
+	}else{
+		jQuery.error( 'Method ' + method+ ' does not exist.' );
+	}
+    
+    function init(option){
+    	var defaultOption = {
+    		title : "",
+    		text : "",
+    		note : "",
+    		paramNames : [],
+    		activeParamSetIdx : -1
+    	};
+    	my.option = $.extend(defaultOption, option);
+    	
+    	console.log("tplview init option: ", option);
+    	
+    	
+    	
+        that.resizable();
+        that.find(".text").resizable();
+        
+        _setButtons();
+        _setTextValues();
+        _createNote();
+        _createParamArea();
+        
+    	_setLayout();
+        
+        _setEvents();
+        
+        return that;
+    }
+    
+    function _setLayout(){
+    	var option = my.option;
+        if(option.width){
+        	if(that.width() < option.width){
+        		that.css("width", option.width);
+        	}
+        }
+        if(option.height){
+        	if(that.height() < option.height){
+        		that.css("height", option.height);
+        	}
+        }
+        
+        that.css("min-height", that.height());
+        that.css("position", "absolute");
+        if(option.left){
+        	that.css("left", option.left);
+        }
+        if(option.top){
+        	that.css("top", option.top);
+        }
+    }
+
     function _setButtons(){
         that.find(".ui_button").button();
         that.find(".ui-dialog-titlebar-close").hover(function(){
@@ -26,98 +78,111 @@ jQuery.fn.tplview = function(option){
     }
     
     function _setTextValues(){
-        if(option.title){
-            that.find(".header span.ui-dialog-title").text(option.title);
+        if(my.option.title){
+            that.find(".header span.ui-dialog-title").text(my.option.title);
         }
-        if(option.text){
-            that.find(".text").text(option.text);
+        if(my.option.text){
+            that.find(".text").text(my.option.text);
         }
     }
     
     function _createParamArea(){
-        if(option.paramNames && option.paramNames.length > 0){
+        if(my.option.paramNames && my.option.paramNames.length > 0){
             //空Setを追加
-            option.paramValSets = option.paramValSets || [];
-            var emptyParamSet = {id: "-1" ,name: "", params: _createEmptyStrArray(option.paramNames.length)};
-            option.paramValSets.unshift(emptyParamSet);
+            my.option.paramValSets = my.option.paramValSets || [];
+            var emptyParamSet = {
+            		id: "-1" ,name: "", 
+            		params: new Array(my.option.paramValSets.length).join("#").split("#")
+            	};
+            my.option.paramValSets.unshift(emptyParamSet);
             
             var paramSetSelect  = that.find(".param_set");
             var selectVal = "-1";
-            that.activeParamSetIdx = 0;
-            $(option.paramValSets).each(function(i, v){
-                paramSetSelect.append($("<option>").attr({value: v.id }).text(v.name));
-                if(v.id === option.activeParamSetId){
-                    selectVal = v.id;
-                    that.activeParamSetIdx = i;
-                }
-            });
-            paramSetSelect.val(selectVal);
-            
-            var tplParams = [];
-            var paramVals = option.paramValSets[that.activeParamSetIdx].params;
-            $(option.paramNames).each(function(i, v){
-                tplParams.push({name: v, val: paramVals[i]});
-            });
-            that.find("ul.params").append($("#tplview-param-li").tmpl(tplParams));        
+            if(my.option.paramValSets){
+                $(my.option.paramValSets).each(function(i, v){
+                    paramSetSelect.append($("<option>").attr({value: v.id }).text(v.name));
+                    if( v.id === my.option.activeParamSetId ){
+                        selectVal = v.id;
+                        that.activeParamSetIdx = i;
+                    }
+                });
+                paramSetSelect.val(selectVal);	
+            }
         }
+
+        var tplParams = [];
+        var paramVals = [];
+        if( my.option.activeParamSetIdx !== -1 ){
+        	paramVals = my.option.paramNames[my.option.activeParamSetIdx].params;
+        }else{
+        	paramVals = new Array(my.option.paramNames.length).join("#").split("#");        	
+        }
+        if(my.option.paramNames.length > 0){
+            $(my.option.paramNames).each(function(i, v){
+                tplParams.push({ name: v, val: paramVals[i] });
+            });
+            that.find("ul.params").append($("#tplview-param-li").tmpl(tplParams));
+            that.find(".param_area").show();
+        }
+
+       
+    }
     
+    function _remove(){
+		that.remove();
+		that.trigger("removed.tplview");
     }
     
     function _setEvents(){
     	
     	that.find(".edit").click(function(){
-    		console.log(that.position());
     		var position = that.position();
     		that.trigger("gotoedit.tplview", $.extend(
     				that.position(), {width: that.width(), height: that.height()}
     			)
     		);
-    		that.remove();
+    		_remove();
     	});
     	
     	that.find(".ui-dialog-titlebar-close").click(function(){
-    		that.trigger("removed.tplview");
-    		that.remove();
+    		_remove();
     	});
     	
         that.find(".param_set").change(function(e){
             
             //変更前の値を格納
             that.find(".params .param_value").each(function(i, v){
-                that.option.paramValSets[that.activeParamSetIdx].params[i] = $(v).val();
+                my.option.params[that.activeParamSetIdx].params[i] = $(v).val();
             });
                     
             var idx = this.selectedIndex;
             that.activeParamSetIdx = this.selectedIndex;
            
             var params = that.find(".params .param_value");
-            $(that.option.paramValSets[idx].params).each(function(i, v){
+            $(my.option.params[idx].params).each(function(i, v){
                 $(params[i]).val(v);
             });   
-            $(that.option.paramValSets[idx].params).each(function(i, v){
-                $(params[i]).val(v);
-            });               
+
         });
         
-        that.find(".param_set_rename").click(function(){
-            //TODO            
+        that.find(".paramset_save").click(function(){
+        	var params = 
+        	that.trigger("paramset_save.tplview", {
+        		selectedId : -1,
+        	});
+        });
+        
+        that.find(".paramset_rename").click(function(){
+            that.trigger("paramset_rename.tplview" );
         });
         
         
     }
-    
-    function _createEmptyStrArray(len){
-        var a = [];
-        for(var i = 0; i < len; i++){
-            a.push("");
-        }
-        return a;
-    }    
-    
+
     
     function _createNote(){
         that.find('.note').qtip({
-           content: option.note,
+           content: my.option.note,
            show: 'click',
            hide: 'click',
            position: {

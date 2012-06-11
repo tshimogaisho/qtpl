@@ -51,7 +51,7 @@
     
     <div class="horizon"></div>
 
-    <div class="param_area corner_rounded2">
+    <div class="param_area corner_rounded2" style="display: none;">
         <div class="param_area_header">
             <select class="param_set">
             </select>
@@ -63,7 +63,6 @@
         </ul>
 
         <div class="param_area_footer">
-
 <!--
             <button class="save_paramset ui_button" style="font-size:0.6em;">保存</button>
             <button class="delete_paramset ui_button" style="font-size:0.6em;">削除</button>
@@ -104,7 +103,7 @@
         <ul class="param_area"></ul>
 
         <div class="bottom">
-           <!-- <button class="cancel ui_button" style="font-size: 0.7em; width: 80px;">表示へ</button>　-->
+            <button class="cancel ui_button" style="font-size: 0.7em; width: 80px;">表示へ</button>
             <button class="save ui_button" style="font-size: 0.7em; width: 80px;">保存</button>
         </div>
 
@@ -129,3 +128,18 @@
 
     </li>
 </script>
+
+<div id="paramset_setname" title="名前入力">
+    <form>
+    <fieldset>
+        <p>名前とコメントを入力して追加ボタンを押してください。</p>
+            <label for="jquery-ui-dialog-form-name">名前</label>
+            <input type="text" name="jquery-ui-dialog-form-name" id="jquery-ui-dialog-form-name" class="text ui-widget-content ui-corner-all" />
+        </p>
+        <p>
+            <label for="jquery-ui-dialog-form-comment">コメント</label>
+            <input type="text" name="jquery-ui-dialog-form-comment" id="jquery-ui-dialog-form-comment" class="text ui-widget-content ui-corner-all" />
+        </p>
+    </fieldset>
+    </form>
+</div>

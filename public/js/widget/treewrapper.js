@@ -52,7 +52,10 @@ jQuery.fn.treewrapper = function(method){
 		function setEvents(){
 			that.on("select_node.jstree", function(e, data){
 				var parentli = $(data.args[0]).parent();
-				that.trigger("select_" + _getNodeType(parentli) + eventSuffix, parentli);
+				that.trigger("select_" + _getNodeType(parentli) + eventSuffix, {
+					liElement: parentli,
+					nid:	parentli.attr("nid")
+				});
 			});
 			that.on("node_created.jstree", function(e, data){
 				that.trigger( _getNodeType(data) +"_created" + eventSuffix, data);

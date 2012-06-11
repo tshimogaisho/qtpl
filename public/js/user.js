@@ -7,104 +7,159 @@ $(function(){
 	var treecontainer  = $("#tree-container").treewrapper({
 		initialJsonDataUrl : _.str.sprintf("/%s/tree", userid)
 	});
-	
 
-	
 	treecontainer.on("select_file.treewrapper", function(e, data){
-//			console.log("select_file", e, data);
-		})
-		.on("file_created.treewrapper", function(e, data){
-			var nid = $(data).attr("nid");
-			var newedit = _createNewTplEdit(nid, data.newname);
-			newedit.save();
-			
-			$("#tpl-container").append(newedit);
-			$("#tpl-container").draggableWrapper();
-			
-			newedit.find(".text").focus();
-			
-//			var newview = $("#tpl-view").tmpl(["newtpl"]);
-//			newview.css({top: 0, left: 0, position: "absolute"});
-//			$("#tpl-container").append(view1);
-//			newview.tplview({
-//			    title : "",
-//			    text: "",
-//			    note: ""	
-//			}).on("gotoedit.tplview", function(e, layout){
-//				var edit1 = $("#tpl-edit").tmpl([" "]);
-//				$("#tpl-container").append(edit1);
-//				edit1.tpledit(
-//					    {title: "title1", text: "text", note: "note", params: ["abc","def"],
-//					    	top: layout.top, left: layout.left,
-//					    	width: layout.width, height: layout.height });
-//	//			edit1.css("position", "absolute");
-//		
-//				$("#tpl-container").draggableWrapper();
-//		
-//			});			
-//			$("#tpl-container").draggableWrapper();
-			
-		})
-		.on("file_removed.treewrapper", function(e, data){
-			var nid = data.nid;
-			$.ajax({
-				type : "DELETE",
-				url : _.str.sprintf("/%s/tpl/%s", userid, nid),
-				async: false,
-				contentType : "application/json; charset=utf-8",
-				success : function(){},
-				error : function(xhr){
-					console.log("http request failure.");
-				}
-			});
-			$("#tpl-container").find(_.str.sprintf("[nid='%s']", nid)).remove();
-		})
-		.on("node_changed.treewrapper", function(e, data){
-			var jsonstring = JSON.stringify(treecontainer.treewrapper("getjson"));
-			$.ajax({
-				type : "PUT",
-				url:  _.str.sprintf("/%s/tree", userid),
-				async: true,
-				contentType : "application/json; charset=utf-8",
-				data : jsonstring,
-				success : function(){console.log("tree is updated.")},
-				error : function(xhr){
-					console.log("http request failure.");
-				}
-			});
+		
+		$.ajax({
+			type : "GET",
+			url:  _.str.sprintf("/%s/tpl/%s", userid, data.nid),
+			async: true,
+			contentType : "application/json; charset=utf-8",
+			success : function(data, dataType){
+				if(!data){ console.error("error."); return; }
+				
+				_createTplView(data);
+			},
+			error : function(xhr){
+				console.log("http request failure.");
+			}
 		});
+		
+	})
+	.on("file_created.treewrapper", function(e, data){
+		var nid = $(data).attr("nid");
+		createTplEdit({nid: nid, title: data.newname}, function(edit){
+			console.log("edit.save");
+			edit.save();
+		});
+		
+	})
+	.on("file_removed.treewrapper", function(e, data){
+		var nid = data.nid;
+		$.ajax({
+			type : "DELETE",
+			url : _.str.sprintf("/%s/tpl/%s", userid, nid),
+			async: false,
+			contentType : "application/json; charset=utf-8",
+			success : function(){},
+			error : function(xhr){
+				console.log("http request failure.");
+			}
+		});
+		$("#tpl-container").find(_.str.sprintf("[nid='%s']", nid)).remove();
+		
+	})
+	.on("node_changed.treewrapper", function(e, data){
+		var jsonstring = JSON.stringify(treecontainer.treewrapper("getjson"));
+		$.ajax({
+			type : "PUT",
+			url:  _.str.sprintf("/%s/tree", userid),
+			async: true,
+			contentType : "application/json; charset=utf-8",
+			data : jsonstring,
+			success : function(){console.log("tree is updated.")},
+			error : function(xhr){
+				console.log("http request failure.");
+			}
+		});
+		
+	});
 	
-	function _createNewTplEdit(nid, title){
-		var edit = $("#tpl-edit").tmpl([" "]);
-		edit.css("position", "absolute");
+	function _createTplView(option){
 		
-		edit.on("onsaved.tpledit", function(e, data){
-			//rename node in tree
-			treecontainer.treewrapper("renameNode", nid, data.title_text);
-			
-			
-		});
+		console.log("_createTplView:" , option);
 		
-		edit.tpledit({nid: nid ,title: title, onsave: function(data){
-			
-				console.log("put request start");
+		var newview = $("#tpl-view").tmpl(["test"]);
+		newview.css({top: 0, left: 0, position: "absolute"});
+		newview.tplview($.extend(option, {}))
+			.on("paramset_save.tplview", function(e, data){
+				console.log("paramset_save");
+
+			})
+			.on("paramset_rename.tplview", function(e, data){
+				console.log("paramset_rename");
+			})			
+			.on("gotoedit.tplview", function(e, layout){
+				
+				//data get
 				$.ajax({
-					type : "PUT",
-					url : _.str.sprintf("/%s/tpl/%s", userid, nid),
+					type : "GET",
+					url:  _.str.sprintf("/%s/tpl/%s", userid, option.nid),
 					async: true,
 					contentType : "application/json; charset=utf-8",
-					data : JSON.stringify(data),
-					success : function(){console.log("put request end.");},
+					success : function(data, dataType){
+						if(!data){ console.error("error."); return; }
+						createTplEdit($.extend( data, layout ));
+						newview.remove();
+					},
 					error : function(xhr){
 						console.log("http request failure.");
 					}
 				});
-			}
+			});
+		$("#tpl-container").append(newview);
+		$("#tpl-container").draggableWrapper();
+		return newview;
+	}
+
+	//new
+	function createTplEdit(data, procAfterCreated){
+		var edit = $("#tpl-edit").tmpl([" "]);
+		$("#tpl-container").append(edit);
+		edit.css("position", "absolute");
+		edit.tpledit(
+				$.extend(data, 
+					{
+						onsave: function(data){
+							console.log("put tpl data.");
+							$.ajax({
+								type : "PUT",
+								url : _.str.sprintf("/%s/tpl/%s", userid, data.nid),
+								async: true,
+								contentType : "application/json; charset=utf-8",
+								data : JSON.stringify(data),
+								success : function(){console.log("put request end.");},
+								error : function(xhr){
+									console.log("http request failure.");
+								}
+							});
+						},
+						
+						oncancel: function(data){
+							
+						}
+					}
+				)
+			);
+		
+		if(procAfterCreated){
+			console.log("propAfterCreated.");
+			procAfterCreated(edit);
+		}
+		
+		edit.on("onsaved.tpledit", function(e, data){
+			treecontainer.treewrapper("renameNode", data.nid, data.title);
+			_createTplView(data);
+			edit.tpledit("removeTplEdit");
 		});
 		
-
+		edit.on("oncancel.tpledit", function(e, data){
+			_createTplView(data);
+			edit.tpledit("removeTplEdit");
+		});
 		
-		return edit;
+		
+		$("#tpl-container").draggableWrapper();
+		edit.find(".text").focus();
+
+	}
+
+	
+	function _onsavedInTplEdit(e, data){
+		console.log("_onsavedInTplEdit");
+		treecontainer.treewrapper("renameNode", nid, data.title);
+		_createTplView(data);
+		
 	}	
 	
 		
@@ -150,7 +205,7 @@ $(function(){
 //	    title : "title2",
 //	    text : "ああああああああああああ",
 //	     note : "As you can see we also provided a third method option, which determines what type of request is used to retrieve the page and how the data is in turn sent. This can be two possible values: 'GET' or 'POST'.<br><br>And there we have it, that's how you retrieve dynamic content for your tooltips. For more information on the options used above, refer back to the Content option documentation.",
-//	    paramNames :  ["param1", "param2", "param3"],
+//	    params :  ["param1", "param2", "param3"],
 //	    paramValSets : [
 //	        {
 //	            id : 1,
@@ -164,7 +219,7 @@ $(function(){
 //
 //	        },       
 //	                ],
-//	    activeParamSetId : ""
+//	    activeParamSetIdx : ""
 //	});	
 //	
 //	

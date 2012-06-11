@@ -1,6 +1,19 @@
-    <h3 class="ui-widget-header header">
-    	<span class="ui-dialog-title" id="ui-dialog-title-dialog">Dialog Title</span>
-		<a href="#" class="ui-dialog-titlebar-close ui-corner-all" role="button" style="position:absolute; top: 5px; right: 10px;">
-			<span class="ui-icon ui-icon-closethick">close</span>
-		</a>
-    </h3>
+//	    title : "title1",
+//	    text : "内容	ビジネスメールコミュニケーション講座 \n日時	2012年5月15日 \n場所	東京国際フォーラム対象	新入社員もしくは研修担当者\n参加費	8,400円",
+//	    note : "As you can see we also provided a third method option, which determines what type of request is used to retrieve the page and how the data is in turn sent. This can be two possible values: 'GET' or 'POST'.<br><br>And there we have it, that's how you retrieve dynamic content for your tooltips. For more information on the options used above, refer back to the Content option documentation.",
+//	    paramNames :  ["param1", "param2", "param3"],
+//	    paramValSets : [
+//	        {
+//	            id : 1,
+//	            name : "Param Set 1",
+				params : {"param1": "param1Val", "param2": "param2Val", "param3" : "param3Val"}
+//	        },
+//	        {
+//	            id : 2,
+//	            name : "Param Set 2",
+				params : {"param1": "param1Val", "param2": "param2Val", "param3" : "param3Val"}
+//	        },      
+//	                ],
+//	    activeParamSetId : ""
+
+
