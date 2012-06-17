@@ -52,6 +52,9 @@ app.get('/:userid/tpl/:nid', routes.tpl("get", mongoclient));
 app.put('/:userid/tpl/:nid', routes.tpl("put", mongoclient));
 app.delete('/:userid/tpl/:nid', routes.tpl("delete", mongoclient));
 
+//app.get('/:userid/tpl/:nid/paramset/', routes.tplparamset("get", mongoclient));
+app.post('/:userid/tpl/:nid/paramset', routes.tplparamset("post", mongoclient));
+
 app.get('/:userid/testtpls', routes.testtpls);
 
 
