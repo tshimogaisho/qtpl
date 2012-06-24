@@ -99,7 +99,7 @@ jQuery.fn.treewrapper = function(method){
 				"core" : { 
 					"html_titles" : false, 
 					"initially_open" : [ "" ],
-					"animation" : 200,
+					"animation" : 100,
 					"strings" : { loading : "Loading ...", new_node : "新規データ" }
 				},
 				"themes" : {

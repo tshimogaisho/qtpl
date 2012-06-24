@@ -3,15 +3,28 @@ jQuery.fn.tplview = function(method){
     var that = this;
     
     this.saveParamset = function(paramsetName){
-    	console.log("saveParamset", paramsetName);
 
     	var paramVals = _getParamVals();
     	
-    	var paramset = { name: paramsetName, vals: {} };
+    	var paramset = { vals: {}};
+    	if( paramsetName ){
+    		paramset.name = paramsetName;
+    	}else{
+    		var select = that.find("select.param_set");
+    		var selectedVal = select.val();
+    		paramset.id = parseInt(selectedVal);
+    		select.find("option").each(function(i,v){
+    			if($(v).attr("value") === selectedVal){
+    				paramset.name = $(v).text();
+    			}
+    		});
+    	}
+    	
     	var paramNames = that.option.paramNames;
     	jQuery(paramNames).each(function(i, v){
     		paramset.vals[v] = paramVals[i];
     	});
+    	
     	that.option.saveParamset({ nid: that.attr("nid"), paramset: paramset });
     	
     	function _getParamVals(){
@@ -21,19 +34,61 @@ jQuery.fn.tplview = function(method){
         	});
         	return vals;
     	}
-
-    }
+    };
+    
+    
+    this.renameParamset = function(paramsetName){
+    	var selectedVal = that.find("select.param_set").val();
+    	that.option.renameParamset({
+    		nid: that.attr("nid"),
+    		paramsetid: selectedVal, paramsetName: paramsetName
+    	}, function(){
+    		//update option
+    		$("select.param_set option").each(function(i, v){
+    			if($(v).attr("value") === selectedVal){
+    				$(v).text(paramsetName);
+    			}
+    		});
+    	});
+    };
     
     this.addParamset = function(paramsetid, paramsetName){
+    	var paramset = that.option.paramset;
+    	var paramNames = that.option.paramNames;
+    	
+    	//0番目の空白オプションの値を変更
     	var firstOption = that.find("select.param_set option").eq(0);
-    	firstOption.after( $('<option>').attr({ value: paramsetid }).text(paramsetName) );
-    	console.log(that.find("select.param_set"));
+    	firstOption.attr({ value: paramsetid }).text(paramsetName);
+    	
+    	//現在のテキストを保管
+    	var paramTexts = that.find(".params .param_value");
+        $(paramNames).each(function(i, v){
+        	paramset[0].id = paramsetid;
+        	paramset[0].name = paramsetName;
+        	paramset[0].vals[v] = $(paramTexts[i]).val();
+        });
+        
+        //空要素を追加
+    	paramset.unshift({id: "-1" ,name: "", vals: {}});
+    	var select = that.find("select.param_set");
+    	select.append($("<option>").attr({ value: "-1" }).text(""));
+    	
+    	//ソート
+    	paramset = _sortParamset();
+    	
+    	//paramsetを元にselectを再生成
+ 		var activeParamsetIdx = _getactiveParamsetIdx(paramset, paramsetid);
+		_createSelect(paramset, activeParamsetIdx);
+		
+		that.activeParamsetIdx = activeParamsetIdx;
+
     }
         
     var methods = {
     		init : init,
     		saveParamset : this.saveParamset,
-    		addParamset: this.addParamset
+    		addParamset: this.addParamset,
+    		renameParamset: this.renameParamset
     }
     
 	if( methods[method] ){
@@ -55,7 +110,7 @@ jQuery.fn.tplview = function(method){
     		onsaveParamset : function(){}
     	};
     	that.option = $.extend(defaultOption, option);
-
+    	
     	this.attr("nid", option.nid);
 
         that.resizable();
@@ -116,15 +171,28 @@ jQuery.fn.tplview = function(method){
         }
     }
     
+    function _sortParamset(){
+    	var paramset = that.option.paramset;
+		paramset.sort(function(a, b){
+			return a.name > b.name ? 1 : -1;
+		});
+		return paramset;
+    }
+    
     function _createParamArea(){
 		var paramNames = that.option.paramNames;
-		var paramset = that.option.paramset;
+
 		var activeParamSetId = that.option.activeParamSetId;
     	if(paramNames.length > 0){
+
+    		var paramset = _sortParamset();
+    		
     		paramset.unshift({id: "-1" ,name: "", vals: {}});	//add empty set
-    		_createSelect(paramset);
     		
     		var activeParamsetIdx = _getactiveParamsetIdx(paramset, activeParamSetId);
+
+    		_createSelect(paramset, activeParamsetIdx);
+    		
     		var activeParamset = paramset[activeParamsetIdx];
     		_createParamRows(paramNames, activeParamset.vals);
     		
@@ -141,31 +209,31 @@ jQuery.fn.tplview = function(method){
             });
     		that.find("ul.params").append($("#tplview-param-li").tmpl(tmplParams));
     	}
-    	
-		//get active paramset Idx
-		function _getactiveParamsetIdx(paramset, activeid){
-			var retIdx = 0;
-			$(paramset).each(function(i, v){
-				if(v.id === activeid){
-					retIdx = i;
-				}
-			});
-			return retIdx;
-		}
-        
-		function _createSelect(paramset){
-			var select  = that.find(".param_set");
-			var selectVal = "-1";
-            $(paramset).each(function(i, v){
-            	select.append($("<option>").attr({value: v.id }).text(v.name));
-                if( v.id === activeParamSetId ){
-                    selectVal = v.id;
-                }
-            });
-            select.val(selectVal);
-		}        
-        
+
     }
+    
+	function _createSelect(paramset, activeParamsetIdx){
+		var select  = that.find(".param_set");
+		select.empty();
+		var selectVal = "-1";
+        $(paramset).each(function(i, v){
+        	select.append($("<option>").attr({value: v.id }).text(v.name));
+            if( i === activeParamsetIdx ){
+                selectVal = v.id;
+            }
+        });
+        select.val(selectVal);
+	}       
+    
+	function _getactiveParamsetIdx(paramset, activeid){
+		var retIdx = 0;
+		$(paramset).each(function(i, v){
+			if(v.id === activeid){
+				retIdx = i;
+			}
+		});
+		return retIdx;
+	}
     
     function _remove(){
 		that.remove();
@@ -174,6 +242,24 @@ jQuery.fn.tplview = function(method){
     
     function _setEvents(){
     	
+		that.find(".param_value").bind("textchange", function(){
+			
+			var idx = $(".param_value").index(this);
+			var paramName = that.option.paramNames[idx];
+			var paramsetVal = _getParamsetVals(paramsetVal);
+						
+			_replaceTextByParams(paramsetVal);
+			 
+			function _getParamsetVals(){
+				var paramsetVal = {};
+				var paramValTexts = that.find(".param_value");
+				$(that.option.paramNames).each(function(i,v){
+					paramsetVal[v] = $(paramValTexts[i]).val();
+				});
+				return paramsetVal;
+			}
+		});
+
     	that.find(".edit").click(function(){
     		var position = that.position();
     		that.trigger("gotoedit.tplview", $.extend(
@@ -188,33 +274,15 @@ jQuery.fn.tplview = function(method){
     	});
     	
         that.find(".param_set").change(function(e){
-        	var paramNames = that.option.paramNames;
-            var paramTexts = that.find(".params .param_value");
-
-            //変更前の値を格納
-            $(paramNames).each(function(i, v){
-            	that.option.paramset[that.activeParamsetIdx].vals[v] = $(paramTexts[i]).val();
-            });
-
-            var idx = this.selectedIndex;
-            that.activeParamsetIdx = this.selectedIndex;
-            var activeParamset = that.option.paramset[that.activeParamsetIdx];
-            
-            $(paramNames).each(function(i, v){
-            	var val =  activeParamset.vals[v] || "";
-            	$(paramTexts[i]).val(val);
-            });
-
+        	_onchange(e, this.selectedIndex);
         });
-        
+                
         that.find(".paramset_save").click(function(){
-        	
         	if(!inputcheck()){
         		return;
         	}
-        	
         	that.trigger("paramset_save.tplview", {
-        		selectedId : -1,
+        		selectedId : that.find("select.param_set").val(),
         		nid: that.attr("nid")
         	});
         	
@@ -231,11 +299,97 @@ jQuery.fn.tplview = function(method){
         });
         
         that.find(".paramset_rename").click(function(){
-            that.trigger("paramset_rename.tplview" );
+        	var select = that.find("select.param_set");
+        	var val = select.val();
+        	if( val !== "-1" ){
+            	var text = _getTextFromValue(select, val);
+        		that.trigger("paramset_rename.tplview", text);
+        	}
+            
+        	function _getTextFromValue(select, val){
+        		var ret;
+        		select.find("option").each(function(i, option){
+        			if($(option).attr("value") === val){
+        				ret = $(option).text();
+        			}
+        		});
+        		return ret;
+        	}
+        	
         });
         
-    }
+        that.find(".paramset_remove").click(function(){
+        	var select = that.find("select.param_set");
+        	var val = parseInt(select.val());
+        	if( val !== -1 ){
+        		that.trigger("paramset_remove.tplview", val);
+        		
+            	that.option.removeParamset({
+            		nid: that.attr("nid"), paramsetid: val
+            	}, function(callback){
+            		var activeParamsetIdx = _getactiveParamsetIdx(that.option.paramset, val);
+            		that.option.paramset.splice(activeParamsetIdx, 1);
+            		select.find("option").eq(activeParamsetIdx).remove();
+            		that.activeParamsetIdx = -1;
+            		select.val("-1");
+            		_onchange(null, 0);
+            	});
+        		
+        	}
 
+        });
+    }
+    
+    
+    function _onchange(e, selectedIdx){
+    	console.log("change");
+    	
+    	var paramNames = that.option.paramNames;
+        var paramTexts = that.find(".params .param_value");
+
+        //変更前の値を格納
+        if(that.activeParamsetIdx !== -1){
+            $(paramNames).each(function(i, v){
+            	that.option.paramset[that.activeParamsetIdx].vals[v] = $(paramTexts[i]).val();
+            });
+        }
+
+        that.activeParamsetIdx = selectedIdx;	//現在選択しているインデックスを新しいものに変更
+        var activeParamset = that.option.paramset[that.activeParamsetIdx];
+        
+        $(paramNames).each(function(i, v){
+        	var val =  activeParamset.vals[v] || "";
+        	$(paramTexts[i]).val(val);
+        });
+        
+        _replaceTextByParams(activeParamset.vals);
+        
+    }
+    
+    function _replaceTextByParams(paramVals){
+    	var text = that.option.text;
+    	var empty = _checkAllValuesAreEmpty(paramVals);
+    	if(empty){
+    		that.find(".text").text(text);
+    	}else{
+            var textEdited = text.toString();
+            $.each(paramVals, function(key, val){
+            	textEdited = textEdited.replace(new RegExp('__' + key + '__', 'g'), val);
+            });
+            that.find(".text").text(textEdited);
+    	}
+
+        function _checkAllValuesAreEmpty(paramvals){
+        	var b = true;
+        	$.each(paramvals, function(k,v){
+        		if(v.trim() !== ""){
+        			b = false;
+        		}
+        	});
+        	return b;
+        }
+    }
+    
     
     function _createNote(){
         that.find('.note').qtip({

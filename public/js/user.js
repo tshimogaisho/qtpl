@@ -7,12 +7,11 @@ $(function(){
 	var treecontainer  = $("#tree-container").treewrapper({
 		initialJsonDataUrl : _.str.sprintf("/%s/tree", userid)
 	});
-
-	treecontainer.on("select_file.treewrapper", function(e, data){
-		
+	
+	function _getDataAndCreateTplView(nid){
 		$.ajax({
 			type : "GET",
-			url:  _.str.sprintf("/%s/tpl/%s", userid, data.nid),
+			url:  _.str.sprintf("/%s/tpl/%s", userid, nid),
 			async: true,
 			contentType : "application/json; charset=utf-8",
 			success : function(data, dataType){
@@ -23,6 +22,12 @@ $(function(){
 				console.log("http request failure.");
 			}
 		});
+	}
+
+	treecontainer.on("select_file.treewrapper", function(e, data){
+		if( $("#tpl-container").find(".tpl-view", "[nid="+ data.nid +"]").size() === 0 ){
+			_getDataAndCreateTplView(data.nid);
+		}
 		
 	})
 	.on("file_created.treewrapper", function(e, data){
@@ -64,35 +69,53 @@ $(function(){
 		
 	});
 	
-	_initParamsetNameDialog();
+	_initParamsetNameDialog("create");
+	_initParamsetNameDialog("rename");
 	
-	function _initParamsetNameDialog(){
-	    jQuery( '#paramset_setname' ).dialog( {
+	function _initParamsetNameDialog(type){
+		var map = { 
+			"create": {
+				dialogid: "#paramset_setname", textid: "#dialog_paramset_name",
+				buttonName: "登録", funcName: "saveParamset"
+			}, 
+			"rename": {
+				dialogid: "#paramset_rename", textid: "#dialog_paramset_rename",
+				buttonName: "更新", funcName: "renameParamset"
+			}
+		};
+		var dialogid = map[type].dialogid;
+		var textid = map[type].textid;
+		var buttonName = map[type].buttonName;
+		var funcname = map[type].funcName;
+		
+		var buttons = {};
+		buttons['キャンセル'] = function(){
+        	$(this).find(textid).val("");
+        	$(this).dialog('close');
+		}
+		buttons[buttonName] = function(){
+        	var paramsetName = $(this).find(textid).val().trim();
+        	if( paramsetName === "" ){
+        		return;
+        	}
+        	var option = $(this).dialog('option');
+        	var nid = option.nid;
+        	var tplview = option.tplview;
+        	tplview.tplview(funcname, paramsetName);
+
+        	$(this).find(textid).val("");
+            $(this).dialog('close');
+		}
+		
+	    jQuery(dialogid).dialog( {
 	        autoOpen: false,
 	        width: 270,
 	        show: 'fade',
 	        hide: 'fade',
 	        modal: true,
-	        buttons: {
-	            '登録': function() {
-	            	var paramsetName = $(this).find("#dialog_paramset_name").val().trim();
-	            	if( paramsetName === "" ){
-	            		return;
-	            	}
-	            	var option = $(this).dialog('option');
-	            	var nid = option.nid;
-	            	var tplview = option.tplview;
-	            	tplview.tplview("saveParamset", paramsetName);
-
-	            	$(this).find("#dialog_paramset_name").val("");
-	                $(this).dialog('close');
-	            },
-	            'キャンセル': function() {
-	            	$(this).find("#dialog_paramset_name").val("");
-	            	$(this).dialog('close');
-	            },
-	        }
+	        buttons: buttons
 	    } );		
+
 	}
 
 	
@@ -101,18 +124,54 @@ $(function(){
 		var newview = $("#tpl-view").tmpl(["test"]);
 		newview.css({top: 0, left: 0, position: "absolute"});
 		newview.tplview($.extend(option, {
+					renameParamset: function(data, callback){
+						console.log("renameParamset", data.paramsetName);
+						$.ajax({
+							type : "POST",
+							url : _.str.sprintf("/%s/tpl/%s/paramset/%s/rename", userid, data.nid, data.paramsetid),
+							async: true,
+							contentType : "application/json; charset=utf-8",
+							data : JSON.stringify({paramsetName: data.paramsetName}),
+							success : function(){
+								console.log("request end.");
+								callback();
+							},
+							error : function(xhr){
+								console.log("http request failure.");
+							}
+						});
+					},
+					
+					removeParamset: function(data, callback){
+						$.ajax({
+							type : "DELETE",
+							url : _.str.sprintf("/%s/tpl/%s/paramset/%s", userid, data.nid, data.paramsetid),
+							async: true,
+							contentType : "application/json; charset=utf-8",
+							success : function(){
+								console.log("request end.");
+								callback();
+							},
+							error : function(xhr){
+								console.log("http request failure.");
+							}
+						});
+					},
+			
 					saveParamset: function(data){
+						console.log("saveParamset.")
+
 						var onsuccess = function(){
 							console.log("request end.")
 						};
-						if(data.paramset.paramsetid){
+						if(data.paramset.id){
 							console.log("put paramset data.");
 							$.ajax({
 								type : "PUT",
-								url : _.str.sprintf("/%s/tpl/%s/paramset/%s", userid, data.nid, data.paramsetid),
+								url : _.str.sprintf("/%s/tpl/%s/paramset/%s", userid, data.nid, data.paramset.id),
 								async: true,
 								contentType : "application/json; charset=utf-8",
-								data : JSON.stringify(data),
+								data : JSON.stringify(data.paramset),
 								success : onsuccess,
 								error : function(xhr){
 									console.log("http request failure.");
@@ -138,16 +197,18 @@ $(function(){
 				})
 			)
 			.on("paramset_save.tplview", function(e, data){
-				if(data.selectedId === -1){
+				if(data.selectedId === "-1"){
 				    jQuery('#paramset_setname').dialog('option', "tplview", newview);
 				    jQuery('#paramset_setname').dialog('open');
 				}else{
+					newview.tplview("saveParamset");
 				}
 			})
-			.on("paramset_rename.tplview", function(e, data){
-				console.log("paramset_rename", data);
-
-				
+			.on("paramset_rename.tplview", function(e, currentName){
+			    $('#paramset_rename').dialog('option', "tplview", newview);
+			    $('#dialog_paramset_rename').val(currentName);
+			    $('#paramset_rename').dialog('open');
+			    $('#dialog_paramset_rename').select();
 			})			
 			.on("gotoedit.tplview", function(e, layout){
 				
@@ -209,12 +270,12 @@ $(function(){
 		
 		edit.on("onsaved.tpledit", function(e, data){
 			treecontainer.treewrapper("renameNode", data.nid, data.title);
-			_createTplView(data);
+			_getDataAndCreateTplView(data.nid);
 			edit.tpledit("removeTplEdit");
 		});
 		
 		edit.on("oncancel.tpledit", function(e, data){
-			_createTplView(data);
+			_getDataAndCreateTplView(data.nid);
 			edit.tpledit("removeTplEdit");
 		});
 		

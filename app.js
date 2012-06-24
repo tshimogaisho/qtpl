@@ -54,8 +54,14 @@ app.delete('/:userid/tpl/:nid', routes.tpl("delete", mongoclient));
 
 //app.get('/:userid/tpl/:nid/paramset/', routes.tplparamset("get", mongoclient));
 app.post('/:userid/tpl/:nid/paramset', routes.tplparamset("post", mongoclient));
+app.put('/:userid/tpl/:nid/paramset/:paramsetid', routes.tplparamset("put", mongoclient));
+app.delete('/:userid/tpl/:nid/paramset/:paramsetid', routes.tplparamset("delete", mongoclient));
+
+app.post('/:userid/tpl/:nid/paramset/:paramsetid/rename', routes.tplparamset.rename("post", mongoclient));
+
 
 app.get('/:userid/testtpls', routes.testtpls);
+
 
 
 var port = process.env.PORT || 3000;
