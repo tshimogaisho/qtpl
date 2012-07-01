@@ -3,8 +3,8 @@
    
     <div class="container-fluid">
       <div class="row-fluid">
-      <div class="span4">ABC</div>
-      <div class="span8">DEF</div>
+      <div class="span4"></div>
+      <div class="span8"></div>
       </div>
       <div class="row-fluid">
         <div class="span3">
@@ -12,16 +12,19 @@
           	<h3>buttons</h3>
 			<div id="sidebar-body">
 				<input type="text" id="search-text" />
-				<div id="tree-container" style=" overflow: auto; min-height: 600px;font-family: Verdana, sans-serif"></div>
+				<div id="tree-container" style="overflow: auto; min-height: 650px; font-family: Verdana, sans-serif"></div>
 			</div>
          </div><!--/.well -->
         </div><!--/span-->
         <div class="span9">
           <div class="hero-unit" style="padding: 5px;">
           	<div>
-          		<h3>buttons</h3>
-          		<div id="tpl-container" style="overflow: auto; position: relative;padding:5px; height: 650px; border:1px solid rgb(200, 200, 200);">
+          		<h3><input type="button" id="clear_views" value="画面クリア"></h3>
+<!--          		<div id="tpl-container" style="overflow: auto; position: relative;padding:5px; height: 650px; border:1px solid rgb(200, 200, 200);"> -->
+          		<div id="tpl-container" style="position: relative;padding:5px;min-height: 1000px; border:1px solid rgb(200, 200, 200);">
+<!--
           			<div style="height:1500px; width: 0px;"></div>
+-->
           		</div>
           	</div>
           </div>	
@@ -131,7 +134,7 @@
 
 <div id="paramset_setname" title="パラメータセット名" style="display:none;">
     <form>
-            <input type="text" name="dialog_paramset_name" id="dialog_paramset_name" class="ui-widget-content ui-corner-all" />
+    	<input type="text" name="dialog_paramset_name" id="dialog_paramset_name" class="ui-widget-content ui-corner-all" />
     </form>
 </div>
 <div id="paramset_rename" title="パラメータセット名変更" style="display:none;">

@@ -8,33 +8,73 @@ $(function(){
 		initialJsonDataUrl : _.str.sprintf("/%s/tree", userid)
 	});
 	
-	function _getDataAndCreateTplView(nid){
+	function _getDataAndCreateTplView(nid, callback){
 		$.ajax({
 			type : "GET",
 			url:  _.str.sprintf("/%s/tpl/%s", userid, nid),
 			async: true,
 			contentType : "application/json; charset=utf-8",
 			success : function(data, dataType){
-				if(!data){ console.error("error."); return; }
-				_createTplView(data);
+				if(!data){ console.error("error."); return; }				
+				var newview = _createTplView(data);
+				if(callback){
+					callback(newview);
+				}
 			},
 			error : function(xhr){
 				console.log("http request failure.");
 			}
 		});
 	}
+	
+	function _adjustPosition(tplview){
+		var container = $("div#tpl-container");
+		var containerWidth = container.width();
+		var containerHeight = container.height();
+		var top = 0, left = 0;
+		var width = tplview.width(), height = tplview.height();
+		var otherTargets = tplview.siblings(".draggable");
+		while(true){
+			if( (top + height) > containerHeight ){
+				//下が足りない場合は下を広げる
+				containerHeight = top + height + 20;
+				container.height(containerHeight);
+			}
+			
+			if((left + width + 10) > containerWidth){
+				left = 0; top += 30;
+			}else{
+		        var positionConflicts = $.checkPositionIsConflict(
+			            {top: top, left: left}, 
+			            {width: tplview.width(), height: tplview.height()},
+			            otherTargets
+		        	);
+		        if(!positionConflicts){
+		        	tplview.css({top: top, left: left});
+		        	break;
+		        }else{
+		        	left += 30;
+		        }
+			}
+		}
+
+	}
 
 	treecontainer.on("select_file.treewrapper", function(e, data){
-		if( $("#tpl-container").find(".tpl-view", "[nid="+ data.nid +"]").size() === 0 ){
-			_getDataAndCreateTplView(data.nid);
+		if( $("#tpl-container").find("[class*='tpl-view'][nid='"+ data.nid +"']").size() === 0 ){
+			_getDataAndCreateTplView(data.nid, function(view){
+				_adjustPosition(view);
+				view.find(".param_set").focus();
+			});
 		}
 		
 	})
 	.on("file_created.treewrapper", function(e, data){
 		var nid = $(data).attr("nid");
 		createTplEdit({nid: nid, title: data.newname}, function(edit){
-			console.log("edit.save");
+			_adjustPosition(edit);
 			edit.save();
+			
 		});
 		
 	})
@@ -67,6 +107,10 @@ $(function(){
 			}
 		});
 		
+	});
+	
+	$("input#clear_views").click(function(){
+		$("div.tpl-view").remove();
 	});
 	
 	_initParamsetNameDialog("create");
