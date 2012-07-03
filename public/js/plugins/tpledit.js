@@ -5,6 +5,7 @@ jQuery.fn.tpledit = function(method){
                 
         this.save = function(){
         	var data = that.getdata();
+        	console.log("this.save", data);
             my.prop.onsave(data);
             that.trigger("onsaved.tpledit", 
             		$.extend(
@@ -63,8 +64,7 @@ jQuery.fn.tpledit = function(method){
         	
         	my.prop = $.extend(defaultOption, prop);
         	        	
-        	this.attr("nid", prop.nid);
-        	
+        	this.attr("nid", prop.nid);        	
         	
             _setTextValues();
             _createParamArea();
@@ -147,6 +147,7 @@ jQuery.fn.tpledit = function(method){
                 that.find(".header span").text(prop.title + " (編集)");
                 that.find(".title_text").val(prop.title);
                 that.find(".text").val(prop.text);
+
                 that.find(".note_text").val(prop.note);	
             }
             

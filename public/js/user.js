@@ -8,61 +8,10 @@ $(function(){
 		initialJsonDataUrl : _.str.sprintf("/%s/tree", userid)
 	});
 	
-	function _getDataAndCreateTplView(nid, callback){
-		$.ajax({
-			type : "GET",
-			url:  _.str.sprintf("/%s/tpl/%s", userid, nid),
-			async: true,
-			contentType : "application/json; charset=utf-8",
-			success : function(data, dataType){
-				if(!data){ console.error("error."); return; }				
-				var newview = _createTplView(data);
-				if(callback){
-					callback(newview);
-				}
-			},
-			error : function(xhr){
-				console.log("http request failure.");
-			}
-		});
-	}
-	
-	function _adjustPosition(tplview){
-		var container = $("div#tpl-container");
-		var containerWidth = container.width();
-		var containerHeight = container.height();
-		var top = 0, left = 0;
-		var width = tplview.width(), height = tplview.height();
-		var otherTargets = tplview.siblings(".draggable");
-		while(true){
-			if( (top + height) > containerHeight ){
-				//下が足りない場合は下を広げる
-				containerHeight = top + height + 20;
-				container.height(containerHeight);
-			}
-			
-			if((left + width + 10) > containerWidth){
-				left = 0; top += 30;
-			}else{
-		        var positionConflicts = $.checkPositionIsConflict(
-			            {top: top, left: left}, 
-			            {width: tplview.width(), height: tplview.height()},
-			            otherTargets
-		        	);
-		        if(!positionConflicts){
-		        	tplview.css({top: top, left: left});
-		        	break;
-		        }else{
-		        	left += 30;
-		        }
-			}
-		}
-
-	}
 
 	treecontainer.on("select_file.treewrapper", function(e, data){
 		if( $("#tpl-container").find("[class*='tpl-view'][nid='"+ data.nid +"']").size() === 0 ){
-			_getDataAndCreateTplView(data.nid, function(view){
+			_getDataAndCreateTplView(data, function(view){
 				_adjustPosition(view);
 				view.find(".param_set").focus();
 			});
@@ -116,55 +65,9 @@ $(function(){
 	_initParamsetNameDialog("create");
 	_initParamsetNameDialog("rename");
 	
-	function _initParamsetNameDialog(type){
-		var map = { 
-			"create": {
-				dialogid: "#paramset_setname", textid: "#dialog_paramset_name",
-				buttonName: "登録", funcName: "saveParamset"
-			}, 
-			"rename": {
-				dialogid: "#paramset_rename", textid: "#dialog_paramset_rename",
-				buttonName: "更新", funcName: "renameParamset"
-			}
-		};
-		var dialogid = map[type].dialogid;
-		var textid = map[type].textid;
-		var buttonName = map[type].buttonName;
-		var funcname = map[type].funcName;
-		
-		var buttons = {};
-		buttons['キャンセル'] = function(){
-        	$(this).find(textid).val("");
-        	$(this).dialog('close');
-		}
-		buttons[buttonName] = function(){
-        	var paramsetName = $(this).find(textid).val().trim();
-        	if( paramsetName === "" ){
-        		return;
-        	}
-        	var option = $(this).dialog('option');
-        	var nid = option.nid;
-        	var tplview = option.tplview;
-        	tplview.tplview(funcname, paramsetName);
-
-        	$(this).find(textid).val("");
-            $(this).dialog('close');
-		}
-		
-	    jQuery(dialogid).dialog( {
-	        autoOpen: false,
-	        width: 270,
-	        show: 'fade',
-	        hide: 'fade',
-	        modal: true,
-	        buttons: buttons
-	    } );		
-
-	}
-
 	
 	function _createTplView(option){
-				
+		console.log("_createTplView()", option);
 		var newview = $("#tpl-view").tmpl(["test"]);
 		newview.css({top: 0, left: 0, position: "absolute"});
 		newview.tplview($.extend(option, {
@@ -173,7 +76,7 @@ $(function(){
 						$.ajax({
 							type : "POST",
 							url : _.str.sprintf("/%s/tpl/%s/paramset/%s/rename", userid, data.nid, data.paramsetid),
-							async: true,
+							async: false,
 							contentType : "application/json; charset=utf-8",
 							data : JSON.stringify({paramsetName: data.paramsetName}),
 							success : function(){
@@ -190,7 +93,7 @@ $(function(){
 						$.ajax({
 							type : "DELETE",
 							url : _.str.sprintf("/%s/tpl/%s/paramset/%s", userid, data.nid, data.paramsetid),
-							async: true,
+							async: false,
 							contentType : "application/json; charset=utf-8",
 							success : function(){
 								console.log("request end.");
@@ -213,7 +116,7 @@ $(function(){
 							$.ajax({
 								type : "PUT",
 								url : _.str.sprintf("/%s/tpl/%s/paramset/%s", userid, data.nid, data.paramset.id),
-								async: true,
+								async: false,
 								contentType : "application/json; charset=utf-8",
 								data : JSON.stringify(data.paramset),
 								success : onsuccess,
@@ -226,7 +129,7 @@ $(function(){
 							$.ajax({
 								type : "POST",
 								url : _.str.sprintf("/%s/tpl/%s/paramset", userid, data.nid),
-								async: true,
+								async: false,
 								contentType : "application/json; charset=utf-8",
 								data : JSON.stringify(data.paramset),
 								success : function(res){
@@ -286,11 +189,11 @@ $(function(){
 				$.extend(data, 
 					{
 						onsave: function(data){
-							console.log("put tpl data.");
+							console.log("put tpl data.", data);
 							$.ajax({
 								type : "PUT",
 								url : _.str.sprintf("/%s/tpl/%s", userid, data.nid),
-								async: true,
+								async: false,
 								contentType : "application/json; charset=utf-8",
 								data : JSON.stringify(data),
 								success : function(){console.log("put request end.");},
@@ -314,24 +217,132 @@ $(function(){
 		
 		edit.on("onsaved.tpledit", function(e, data){
 			treecontainer.treewrapper("renameNode", data.nid, data.title);
-			_getDataAndCreateTplView(data.nid);
+			_getDataAndCreateTplView(data);
 			edit.tpledit("removeTplEdit");
 		});
 		
 		edit.on("oncancel.tpledit", function(e, data){
-			_getDataAndCreateTplView(data.nid);
+			_getDataAndCreateTplView(data);
 			edit.tpledit("removeTplEdit");
 		});
 		
-		
 		$("#tpl-container").draggableWrapper();
+
 		edit.find(".text").focus();
 
+
+	}	
+	
+	
+	function _initParamsetNameDialog(type){
+		var map = { 
+			"create": {
+				dialogid: "#paramset_setname", textid: "#dialog_paramset_name",
+				buttonName: "登録", funcName: "saveParamset"
+			}, 
+			"rename": {
+				dialogid: "#paramset_rename", textid: "#dialog_paramset_rename",
+				buttonName: "更新", funcName: "renameParamset"
+			}
+		};
+		var dialogid = map[type].dialogid;
+		var textid = map[type].textid;
+		var buttonName = map[type].buttonName;
+		var funcname = map[type].funcName;
+		
+		var buttons = {};
+		buttons['キャンセル'] = function(){
+        	$(this).find(textid).val("");
+        	$(this).dialog('close');
+		}
+		buttons[buttonName] = function(){
+        	var paramsetName = $(this).find(textid).val().trim();
+        	if( paramsetName === "" ){
+        		return;
+        	}
+        	var option = $(this).dialog('option');
+        	var nid = option.nid;
+        	var tplview = option.tplview;
+        	tplview.tplview(funcname, paramsetName);
+
+        	$(this).find(textid).val("");
+            $(this).dialog('close');
+		}
+		
+	    jQuery(dialogid).dialog( {
+	        autoOpen: false,
+	        width: 270,
+	        show: 'fade',
+	        hide: 'fade',
+	        modal: true,
+	        buttons: buttons
+	    } );		
+
 	}
+	
+	function _getDataAndCreateTplView(data, callback){
+		console.log("_getDataAndCreateTplView", data);
+		$.ajax({
+			type : "GET",
+			url:  _.str.sprintf("/%s/tpl/%s", userid, data.nid),
+			async: true,
+			contentType : "application/json; charset=utf-8",
+			success : function(responseData, dataType){
+				if(!responseData){ console.error("error."); return; }
+				console.log("_getDataAndCreateTplView", responseData);
+				var tplviewData = responseData;
+				$(["left", "top", "width", "height"]).each(function(i, v){
+					if(data[v]){
+						tplviewData[v] = data[v];
+					}
+				});
+
+				var newview = _createTplView(tplviewData);
+				if(callback){
+					callback(newview);
+				}
+			},
+			error : function(xhr){
+				console.log("http request failure.");
+			}
+		});
+	}
+	
+	function _adjustPosition(tplview){
+		var container = $("div#tpl-container");
+		var containerWidth = container.width();
+		var containerHeight = container.height();
+		var top = 0, left = 0;
+		var width = tplview.width(), height = tplview.height();
+		var otherTargets = tplview.siblings(".draggable");
+		while(true){
+			if( (top + height) > containerHeight ){
+				//下が足りない場合は下を広げる
+				containerHeight = top + height + 20;
+				container.height(containerHeight);
+			}
+			
+			if((left + width + 10) > containerWidth){
+				left = 0; top += 30;
+			}else{
+		        var positionConflicts = $.checkPositionIsConflict(
+			            {top: top, left: left}, 
+			            {width: tplview.width(), height: tplview.height()},
+			            otherTargets
+		        	);
+		        if(!positionConflicts){
+		        	tplview.css({top: top, left: left});
+		        	break;
+		        }else{
+		        	left += 30;
+		        }
+			}
+		}
+
+	}	
 
 	
 	function _onsavedInTplEdit(e, data){
-		console.log("_onsavedInTplEdit");
 		treecontainer.treewrapper("renameNode", nid, data.title);
 		_createTplView(data);
 		

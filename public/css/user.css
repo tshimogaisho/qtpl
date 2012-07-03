@@ -164,7 +164,8 @@
     position : absolute;
     top: 10px; left : 10px;
     text-align : center;
-    background-color: rgb(240, 240, 250);
+    background-color: rgb(230, 240, 240);
+
 }
 
 .tpl-edit ul{

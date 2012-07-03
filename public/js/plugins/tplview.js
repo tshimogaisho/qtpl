@@ -142,7 +142,7 @@ jQuery.fn.tplview = function(method){
         		that.css("height", option.height);
         	}
         }
-        
+                
         that.css("min-height", that.height());
         that.css("position", "absolute");
         if(option.left){
@@ -265,19 +265,21 @@ jQuery.fn.tplview = function(method){
     				that.position(), {width: that.width(), height: that.height()}
     			)
     		);
-    		that.find('.note').qtip("hide");
+    		_hideQtip();
+
     		_remove();
     	});
     	
     	that.find(".ui-dialog-titlebar-close").click(function(){
-    		that.find('.note').qtip("hide");
+    		_hideQtip();
     		_remove();
     	});
-    	
+    	    	
 		$(that).draggable({
 			start: function() {
 				console.log("drag start.");
-				that.find('.note').qtip("hide");
+	    		_hideQtip();
+
 			}
 		});    	
     	
@@ -348,6 +350,12 @@ jQuery.fn.tplview = function(method){
         });
     }
     
+	function _hideQtip(){
+		var note = that.find('.note');
+		if(note.css("display") == "block"){
+			note.qtip("hide");
+		}
+	}    
     
     function _onchange(e, selectedIdx){
     	console.log("change");
@@ -402,32 +410,39 @@ jQuery.fn.tplview = function(method){
     
     
     function _createNote(){
-        that.find('.note').qtip({
-           content: that.option.note,
-           show: 'click',
-           hide: 'click',
-           position: {
-              corner: {
-                 target: 'rightMiddle',
-                 tooltip: 'leftTop'
-              }
-           },
-            style: { 
-                name: 'blue',
-                left: 50,
-                tip: {
-                    corner: "leftTop",
-                    color: "#ADD9ED",
-                    size: {x: 30, y:8},
+    	var note = that.find('.note');
+    	if(that.option.note.trim() !== ""){
+    		note.qtip({
+                content: that.option.note,
+                show: 'click',
+                hide: 'click',
+                position: {
+                   corner: {
+                      target: 'rightMiddle',
+                      tooltip: 'leftTop'
+                   }
                 },
-                border: {
-                      width: 2,
-                      radius: 4,
-                      color: '#ADD9ED'
-                   },        
-              'font-size': 12
-            }
-        });        
+                 style: { 
+                     name: 'blue',
+                     left: 50,
+                     tip: {
+                         corner: "leftTop",
+                         color: "#ADD9ED",
+                         size: {x: 30, y:8},
+                     },
+                     border: {
+                           width: 2,
+                           radius: 4,
+                           color: '#ADD9ED'
+                        },        
+                   'font-size': 12
+                 }
+             });    
+    	}else{
+    		note.hide();
+    	}
+
+    
     }
         
     
