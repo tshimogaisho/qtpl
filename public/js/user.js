@@ -256,7 +256,8 @@ $(function(){
         	$(this).dialog('close');
 		}
 		buttons[buttonName] = function(){
-        	var paramsetName = $(this).find(textid).val().trim();
+			console.log("textid:", textid);
+        	var paramsetName = $(textid).val().trim();
         	if( paramsetName === "" ){
         		return;
         	}
@@ -276,7 +277,14 @@ $(function(){
 	        hide: 'fade',
 	        modal: true,
 	        buttons: buttons
-	    } );		
+	    } );
+	    
+		$(textid).keypress(function(event){
+			if( event.which === 13 ){
+		    	//Enter Key
+				$($(dialogid).siblings().find("button")[1]).trigger("click");
+			}
+		});
 
 	}
 	
