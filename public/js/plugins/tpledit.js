@@ -317,7 +317,7 @@ jQuery.fn.tpledit = function(method){
                             errorExist = true;
                         }
                 });
-                return !	errorExist;
+                return !errorExist;
                 
                 function _checkTextLength(txt, len){
                     return txt.length <= len;
