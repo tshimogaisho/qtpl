@@ -102,6 +102,7 @@ $(function(){
 	
 	$("input#clear_views").click(function(){
 		$("div.tpl-view").remove();
+		$("div.tpl-edit").remove();
 	});
 	
 	_initParamsetNameDialog("create");
