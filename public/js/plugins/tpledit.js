@@ -75,6 +75,7 @@ jQuery.fn.tpledit = function(method){
             _setTextValues();
             _createParamArea();
 
+            this.find(".text").elastic();	//テキストエリアが動的に変わるようにする
             this.resizable({alsoResize: this.find(".text"), stop: function(e, ui){
             	that.trigger("resized.tpledit", [ui.size, ui.element[0]]);
             }});
