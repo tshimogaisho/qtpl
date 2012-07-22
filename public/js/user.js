@@ -249,8 +249,8 @@ $(function(){
 			edit.tpledit("removeTplEdit");
 			
 		}).on("resized.tpledit", function(e, size, target){
-			var nid = $(target).attr("nid");
-			_saveCookieAboutSize(nid, size);
+//			var nid = $(target).attr("nid");
+//			_saveCookieAboutSize(nid, size);
 		});
 
 		$("#tpl-container").draggableWrapper();
