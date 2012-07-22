@@ -48,6 +48,7 @@ app.get('/', routes.index);
 app.get('/:userid', routes.user(mongoclient));
 app.get('/:userid/tree', routes.tree("get", mongoclient));
 app.put('/:userid/tree', routes.tree("put", mongoclient));
+app.post('/:userid/tpl', routes.tpl("post", mongoclient));
 app.get('/:userid/tpl/:nid', routes.tpl("get", mongoclient));
 app.put('/:userid/tpl/:nid', routes.tpl("put", mongoclient));
 app.delete('/:userid/tpl/:nid', routes.tpl("delete", mongoclient));

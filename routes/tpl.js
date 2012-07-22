@@ -1,3 +1,4 @@
+var mongodb = require('mongodb');
 var async = require('async');
 var _ = require('underscore')._;
 
@@ -18,6 +19,38 @@ exports.tpl = function(method, mongoclient){
 					res.json(result);
 				});
 			});
+		}
+	}
+	
+	if( method === "post" ){
+		return function(req, res){
+
+			var userid = req.param("userid");
+			var delnidsStr = req.param("delnids");
+			if( delnidsStr &&  delnidsStr !== "" ){
+				var delnids = delnidsStr.split(",");
+				var collection = new mongodb.Collection(mongoclient, 'tpl');
+				collection.count({ "nid" : { $in : delnids } }, function(err, count){
+					if(count === delnids.length){
+						collection.remove({ "nid" : { $in : delnids } }, function(err, result){
+							if(err){
+								console.log(err);
+								res.send(500);
+								return;
+							}
+							console.log("tpl data removed. userid:%s nids: %s", userid, delnidsStr);
+							res.send(200);
+						});
+					}else{
+						res.send(400);
+					}
+				});
+
+			}else{
+				res.send(404);
+				return;
+			}
+
 		}
 	}
 	

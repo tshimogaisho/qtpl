@@ -939,7 +939,7 @@
 			move_node : function (obj, ref, position, is_copy, is_prepared, skip_check) {
 				if(!is_prepared) { 
 					return this.prepare_move(obj, ref, position, function (p) {
-						this.move_node(p, false, false, is_copy, true, skip_check);
+						return this.move_node(p, false, false, is_copy, true, skip_check);
 					});
 				}
 				if(is_copy) { 
@@ -951,6 +951,7 @@
 				var o = false;
 				if(is_copy) {
 					o = obj.o.clone(true);
+					o.attr("nid", "new");	//gaisho add.
 					o.find("*[id]").andSelf().each(function () {
 						if(this.id) { this.id = "copy_" + this.id; }
 					});
@@ -1343,11 +1344,15 @@
 			},
 			rename : function (obj) {
 				obj = this._get_node(obj);
-				this.__rollback();
-				var f = this.__callback;
-				this._show_input(obj, function (obj, new_name, old_name) { 
-					f.call(this, { "obj" : obj, "new_name" : new_name, "old_name" : old_name });
-				});
+				//gaisho folder以外renameできないように制限
+				if($(obj).attr("rel") === "folder"){
+					this.__rollback();
+					var f = this.__callback;
+					this._show_input(obj, function (obj, new_name, old_name) { 
+						f.call(this, { "obj" : obj, "new_name" : new_name, "old_name" : old_name });
+					});	
+				}
+
 			},
 			create : function (obj, position, js, callback, skip_rename) {
 				var t, _this = this;
@@ -1419,8 +1424,11 @@
 				var nodes = this.data.crrm.ct_nodes ? this.data.crrm.ct_nodes : this.data.crrm.cp_nodes;
 				if(!this.data.crrm.ct_nodes && !this.data.crrm.cp_nodes) { return false; }
 				if(this.data.crrm.ct_nodes) { this.move_node(this.data.crrm.ct_nodes, obj); this.data.crrm.ct_nodes = false; }
-				if(this.data.crrm.cp_nodes) { this.move_node(this.data.crrm.cp_nodes, obj, false, true); }
+				if(this.data.crrm.cp_nodes) { 
+					this.move_node(this.data.crrm.cp_nodes, obj, false, true);
+				}
 				this.__callback({ "obj" : obj, "nodes" : nodes });
+				
 			}
 		}
 	});
@@ -3807,17 +3815,18 @@
 				if($.isFunction(i)) { i = i.call(this, obj); }
 				this.data.contextmenu = true;
 				
-				//gaisho add テンプレートファイルの子は作成できないようにする
-				if($(obj).attr("rel") === undefined){
-					delete i.create_template;
-					delete i.create_folder;
-				}
-				if($(obj).attr("rel") === "root"){
-					$(["remove", "cut", "copy", "paste"]).each(function(idx, val){
-						delete i[val];
-					});
+				//rel属性が一致しないものは除外する
+				var nonTargetItems = [];
+				var attr = $(obj).attr("rel");
+				$.each(i, function(k, v){
+					if( $.inArray( attr, v.rel ) === -1 ){
+						nonTargetItems.push(k);
+					}
+				});
 
-				}
+				$(nonTargetItems).each(function(idx, v){
+					delete i[v];
+				});
 
 				
 				$.vakata.context.show(i, a, x, y, this, obj, this._get_settings().core.rtl);

@@ -59,7 +59,13 @@ jQuery.fn.tpledit = function(method){
         function init(prop){
             var defaultOption = {
             		title: "", text: "", note: "", paramNames : [""],
-            		onsave: function(){}
+            		onsave: function(){},
+            		charLimit: {
+            		    "title_text" : 50,
+            		    "text" : 4000,
+            		    "note_text" : 2000,
+            		    "param_name" : 30
+            		}
             };
         	
         	my.prop = $.extend(defaultOption, prop);
@@ -294,14 +300,11 @@ jQuery.fn.tpledit = function(method){
                 }
                 
                 (function(){
-                    var limitCharCntMap = {
-                        "title_text" : 50,
-                        "text" : 2000,
-                        "note_text" : 2000
-                    };
+
+                    var charLimit = my.prop.charLimit;
                     $(["title_text", "text","note_text"]).each(function(i, v){
                         var o = that.find("." + v);
-                        if(!_checkTextLength($.trim(o.val()), limitCharCntMap[v])){
+                        if(!_checkTextLength($.trim(o.val()), charLimit[v])){
                             _addInputErrorClass(o);
                             errorExist = true;
                         }
@@ -309,7 +312,7 @@ jQuery.fn.tpledit = function(method){
                 })();
                 
                 that.find(".param_name_text").each(function(i, v){
-                        if(!_checkTextLength($.trim($(v).val()), 30)){
+                        if(!_checkTextLength($.trim($(v).val()), charLimit.param_name)){
                             _addInputErrorClass($(v));
                             errorExist = true;
                         }

@@ -10,7 +10,7 @@ $(function(){
 	
 
 	treecontainer.on("select_file.treewrapper", function(e, data){
-		if( $("#tpl-container").find("[class*='tpl-view'][nid='"+ data.nid +"']").size() === 0 ){
+		if( $("#tpl-container").find("div[nid='"+ data.nid +"']").size() === 0 ){
 			_getDataAndCreateTplView(data, function(view){
 				_adjustPosition(view);
 				view.find(".param_set").focus();
@@ -23,11 +23,31 @@ $(function(){
 		createTplEdit({nid: nid, title: data.newname}, function(edit){
 			_adjustPosition(edit);
 			edit.save();
-			
 		});
-		
 	})
+	.on("pasted.treewrapper", function(e, data){
+		var origin = data.origin;
+		var created  = data.created;
+		_getTpl(userid, origin.attr("nid"), function(data){
+			data.nid = created.attr("nid");
+			_putTpl(userid, data, function(){
+
+//				console.log(created);
+//				created.trigger("click");
+				var newEdit = createTplEdit(data, function(edit){
+					_adjustPosition(edit);
+					created.find("a").focus().click();
+				});
+				
+
+//				newview.find(".param_set").focus();
+			});
+		});
+	})
+	
+	
 	.on("file_removed.treewrapper", function(e, data){
+		console.log("file_removed");
 		var nid = data.nid;
 		$.ajax({
 			type : "DELETE",
@@ -42,6 +62,28 @@ $(function(){
 		$("#tpl-container").find(_.str.sprintf("[nid='%s']", nid)).remove();
 		
 	})
+	.on("folder_removed.treewrapper", function(e, data){
+		console.log( "folder_removed." , data );
+		var nids = [];
+		$($(data).find("li[rel='default']")).each(function( i, v){
+			nids.push($(v).attr("nid"));
+		});
+		if(nids.length > 0){
+			$.ajax({
+				type : "POST",
+				url : _.str.sprintf("/%s/tpl?delnids=%s" , userid, nids.join(",")),
+				async: false,
+				contentType : "application/json; charset=utf-8",
+				success : function(){},
+				error : function(xhr){
+					console.log("http request failure.");
+				}
+			});
+		}
+
+	})
+	
+	
 	.on("node_changed.treewrapper", function(e, data){
 		var jsonstring = JSON.stringify(treecontainer.treewrapper("getjson"));
 		$.ajax({
@@ -158,22 +200,11 @@ $(function(){
 			    $('#dialog_paramset_rename').select();
 			})			
 			.on("gotoedit.tplview", function(e, layout){
-				
-				//data get
-				$.ajax({
-					type : "GET",
-					url:  _.str.sprintf("/%s/tpl/%s", userid, option.nid),
-					async: true,
-					contentType : "application/json; charset=utf-8",
-					success : function(data, dataType){
-						if(!data){ console.error("error."); return; }
-						createTplEdit($.extend( data, layout ));
-						newview.remove();
-					},
-					error : function(xhr){
-						console.log("http request failure.");
-					}
+				_getTpl(userid, option.nid, function(data){
+					createTplEdit($.extend( data, layout ));
+					newview.remove();
 				});
+
 			});
 		$("#tpl-container").append(newview);
 		$("#tpl-container").draggableWrapper();
@@ -190,21 +221,9 @@ $(function(){
 					{
 						onsave: function(data){
 							console.log("put tpl data.", data);
-							$.ajax({
-								type : "PUT",
-								url : _.str.sprintf("/%s/tpl/%s", userid, data.nid),
-								async: false,
-								contentType : "application/json; charset=utf-8",
-								data : JSON.stringify(data),
-								success : function(){console.log("put request end.");},
-								error : function(xhr){
-									console.log("http request failure.");
-								}
-							});
+							_putTpl(userid, data);							
 						},
-						
 						oncancel: function(data){
-							
 						}
 					}
 				)
@@ -231,6 +250,40 @@ $(function(){
 		edit.find(".text").focus();
 
 
+	}
+	
+	function _getTpl(userid, nid, callback){
+		$.ajax({
+			type : "GET",
+			url:  _.str.sprintf("/%s/tpl/%s", userid, nid),
+			async: true,
+			contentType : "application/json; charset=utf-8",
+			success : function(data, dataType){
+				if(!data){ console.error("error."); return; }
+				if(callback) callback(data);
+			},
+			error : function(xhr){
+				console.log("http request failure.");
+			}
+		});
+	}	
+	
+	function _putTpl(userid, data, callback){
+		$.ajax({
+			type : "PUT",
+			url : _.str.sprintf("/%s/tpl/%s", userid, data.nid),
+			async: false,
+			contentType : "application/json; charset=utf-8",
+			data : JSON.stringify(data),
+			success : function(data, dataType){
+				console.log("put request end.");
+				if(callback) callback(data);
+				
+			},
+			error : function(xhr){
+				console.log("http request failure.");
+			}
+		});
 	}	
 	
 	

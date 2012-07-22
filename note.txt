@@ -1,9 +1,12 @@
-    that.activeParamsetIdx = selectedIdx;	//現在選択しているインデックスを新しいものに変更
-    var activeParamset = that.option.paramset[that.activeParamsetIdx];
-    
-    $(paramNames).each(function(i, v){
-    	var val =  activeParamset.vals[v] || "";
-    	$(paramTexts[i]).val(val);
-    });
-    
-    _replaceTextByParams(activeParamset.vals);
+var limitCharCntMap = {
+    "title_text" : 50,
+    "text" : 4000,
+    "note_text" : 2000
+};
+
+charLimit: {
+    "title_text" : 50,
+    "text" : 4000,
+    "note_text" : 2000,
+    "param_name" : 30
+}
