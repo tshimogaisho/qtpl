@@ -431,7 +431,7 @@ $(function(){
 		var sizes = sizesString ? JSON.parse(sizesString) : {};
 		sizes[nid] = _.str.sprintf("%d:%d", size.width, size.height);
 		console.log("save cookie [sizes]: ", sizes);
-		$.cookie("sizes", JSON.stringify(sizes));
+		$.cookie("sizes", JSON.stringify(sizes), { expires: 365 });
 	}	
 
 
