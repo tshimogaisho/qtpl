@@ -113,7 +113,9 @@ jQuery.fn.tplview = function(method){
     	
     	this.attr("nid", option.nid);
 
-        that.resizable();
+        that.resizable({stop: function(e, ui){
+        	that.trigger("resized.tplview", [ui.size, ui.element[0]]);
+        }});
         that.find(".text").resizable();
         
         _setButtons();

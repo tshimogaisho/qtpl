@@ -1,12 +1,18 @@
-var limitCharCntMap = {
-    "title_text" : 50,
-    "text" : 4000,
-    "note_text" : 2000
-};
+jquery.cookie.js
 
-charLimit: {
-    "title_text" : 50,
-    "text" : 4000,
-    "note_text" : 2000,
-    "param_name" : 30
-}
+width, height
+sizes = "11=200:400,12=300-400";
+
+}).on("resized.tpledit", function(e, size, target){
+	var nid = $(target).attr("nid");
+	_saveCookieAboutSize(nid, size);
+});
+
+
+
+var sizesString = $.cookie("sizes");
+console.log("get cookie [sizes]: ", sizesString);
+var sizes = sizesString ? JSON.parse(sizesString) : {};
+sizes[nid] = _.str.sprintf("%d:%d", size.width, size.height);
+console.log("save cookie [sizes]: ", sizes);
+$.cookie("sizes", JSON.stringify(sizes));

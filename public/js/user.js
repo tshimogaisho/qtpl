@@ -32,15 +32,11 @@ $(function(){
 			data.nid = created.attr("nid");
 			_putTpl(userid, data, function(){
 
-//				console.log(created);
-//				created.trigger("click");
 				var newEdit = createTplEdit(data, function(edit){
 					_adjustPosition(edit);
 					created.find("a").focus().click();
 				});
-				
 
-//				newview.find(".param_set").focus();
 			});
 		});
 	})
@@ -107,11 +103,17 @@ $(function(){
 	
 	_initParamsetNameDialog("create");
 	_initParamsetNameDialog("rename");
-	
-	
+		
 	function _createTplView(option){
 		console.log("_createTplView()", option);
 		var newview = $("#tpl-view").tmpl(["test"]);
+		
+		var size = _getSizeFromCookie(option.nid);
+		if(size){
+			option.width = size.width;
+			option.height = size.height;
+		}
+		
 		newview.css({top: 0, left: 0, position: "absolute"});
 		newview.tplview($.extend(option, {
 					renameParamset: function(data, callback){
@@ -205,7 +207,9 @@ $(function(){
 					createTplEdit($.extend( data, layout ));
 					newview.remove();
 				});
-
+			}).on("resized.tplview", function(e, size, target){
+				var nid = $(target).attr("nid");
+				_saveCookieAboutSize(nid, size);
 			});
 		$("#tpl-container").append(newview);
 		$("#tpl-container").draggableWrapper();
@@ -239,20 +243,22 @@ $(function(){
 			treecontainer.treewrapper("renameNode", data.nid, data.title);
 			_getDataAndCreateTplView(data);
 			edit.tpledit("removeTplEdit");
-		});
-		
-		edit.on("oncancel.tpledit", function(e, data){
+			
+		}).on("oncancel.tpledit", function(e, data){
 			_getDataAndCreateTplView(data);
 			edit.tpledit("removeTplEdit");
+			
+		}).on("resized.tpledit", function(e, size, target){
+			var nid = $(target).attr("nid");
+			_saveCookieAboutSize(nid, size);
 		});
-		
+
 		$("#tpl-container").draggableWrapper();
 
 		edit.find(".text").focus();
 
-
 	}
-	
+		
 	function _getTpl(userid, nid, callback){
 		$.ajax({
 			type : "GET",
@@ -358,7 +364,7 @@ $(function(){
 						tplviewData[v] = data[v];
 					}
 				});
-
+				
 				var newview = _createTplView(tplviewData);
 				if(callback){
 					callback(newview);
@@ -401,14 +407,33 @@ $(function(){
 			}
 		}
 
-	}	
-
+	}
 	
 	function _onsavedInTplEdit(e, data){
 		treecontainer.treewrapper("renameNode", nid, data.title);
-		_createTplView(data);
-		
+		_createTplView(data);	
 	}	
+	
+	function _getSizeFromCookie(nid){
+		var sizesString = $.cookie("sizes");
+		var sizes = sizesString ? JSON.parse(sizesString) : {};
+		if(sizes[nid]){
+			var s = sizes[nid].split(":");
+			return {width: s[0], height: s[1]}
+		}else{
+			return null;
+		}
+	}
+	
+	function _saveCookieAboutSize(nid, size){
+		var sizesString = $.cookie("sizes");
+		console.log("get cookie [sizes]: ", sizesString);
+		var sizes = sizesString ? JSON.parse(sizesString) : {};
+		sizes[nid] = _.str.sprintf("%d:%d", size.width, size.height);
+		console.log("save cookie [sizes]: ", sizes);
+		$.cookie("sizes", JSON.stringify(sizes));
+	}	
+
 
 	
 });

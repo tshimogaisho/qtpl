@@ -75,7 +75,9 @@ jQuery.fn.tpledit = function(method){
             _setTextValues();
             _createParamArea();
 
-            this.resizable({alsoResize: this.find(".text")});
+            this.resizable({alsoResize: this.find(".text"), stop: function(e, ui){
+            	that.trigger("resized.tpledit", [ui.size, ui.element[0]]);
+            }});
 
             _setLayout();
             
