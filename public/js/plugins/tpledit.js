@@ -277,6 +277,7 @@ jQuery.fn.tpledit = function(method){
     	            return false;
 
             	}catch(e){
+            		console.log(e);
             		console.error(e);
             		return false;
             	}
@@ -298,10 +299,10 @@ jQuery.fn.tpledit = function(method){
                     _addInputErrorClass(titleText);
                     errorExist = true;
                 }
-                
+                var charLimit = my.prop.charLimit;
+
                 (function(){
 
-                    var charLimit = my.prop.charLimit;
                     $(["title_text", "text","note_text"]).each(function(i, v){
                         var o = that.find("." + v);
                         if(!_checkTextLength($.trim(o.val()), charLimit[v])){
