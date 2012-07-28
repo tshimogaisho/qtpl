@@ -1,5 +1,6 @@
-var mongodb = require('mongodb');
-
+//var mongodb = require('mongodb');
+var mongodb = require('mongoskin');
+var url = require('url');
 /**
  * Module dependencies.
  */
@@ -26,7 +27,7 @@ app.configure(function(){
 
 
 app.configure('development', function(){
-  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));  
   mongoclient = new mongodb.Db('qtpl', 
 		  new mongodb.Server("127.0.0.1", 27017, {}), {});
 });
@@ -40,8 +41,8 @@ mongoclient.open(function( err, client){
 });
 
 app.configure('production', function(){
-  app.use(express.errorHandler());
-//  mongoclient = new mongodb.Server("localhost", 27017, {});
+	app.use(express.errorHandler());
+	mongoclient = mongo.db(process.env.MONGOHQ_URL);
 });
 
 app.get('/', routes.index);
