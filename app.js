@@ -45,16 +45,20 @@ app.configure('development', function(){
 app.configure('production', function(){
 	console.log("production....");
 	app.use(express.errorHandler());
+
 	mongoclient = mongodb.db(process.env.MONGOHQ_URL, function(err){
-		console.log(err);
-	});
+		if(err){
+			console.log(err);
+		}
+	});	
 	mongoclient.open(function( err, client){
 		if(err){
 			console.log(err);
 		}else{
 			console.log("connected to mongodb");
 		}
-	});
+	});	
+
 });
 
 
