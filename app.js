@@ -12,18 +12,7 @@ var app = module.exports = express.createServer();
 
 var mongoclient;
 
-app.configure(function(){
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'ejs');
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-  app.use(express.bodyParser());
-  app.use(app.router);
-  app.use(express.static(__dirname + '/public'));
-  app.use(express.favicon(__dirname + '/public/ico/favicon.ico', {
-	    maxAge: 2592000000
-	  }));
-});
+
 
 
 app.configure('development', function(){
@@ -34,17 +23,32 @@ app.configure('development', function(){
 });
 
 app.configure('production', function(){
-	console.log("production....");
 	app.use(express.errorHandler());
-	console.log(process.env.MONGOHQ_URL);
+
 
 	mongoclient = mongodb.db("mongodb://heroku:herokumongo@flame.mongohq.com:27031/app4012201", function(err){
 		if(err){
 			console.log(err);
 		}
 	});	
-
 });
+
+app.configure(function(){
+	if (process.env.BASIC_AUTH_USER) {
+		app.use(express.basicAuth(process.env.BASIC_AUTH_USER, process.env.BASIC_AUTH_PASS));
+	}
+	
+	app.set('views', __dirname + '/views');
+	app.set('view engine', 'ejs');
+	app.use(express.bodyParser());
+	app.use(express.methodOverride());
+	app.use(express.bodyParser());
+	app.use(app.router);
+	app.use(express.static(__dirname + '/public'));
+	app.use(express.favicon(__dirname + '/public/ico/favicon.ico', {
+	maxAge: 2592000000
+	}));
+	});
 
 mongoclient.open(function( err, client){
 	if(err){
