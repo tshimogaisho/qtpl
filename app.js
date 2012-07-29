@@ -30,6 +30,13 @@ app.configure('development', function(){
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));  
   mongoclient = new mongodb.Db('qtpl', 
 		  new mongodb.Server("127.0.0.1", 27017, {}), {});
+  mongoclient.open(function( err, client){
+		if(err){
+			console.log(err);
+		}else{
+			console.log("connected to mongodb");
+		}
+	});
 
 });
 
@@ -38,16 +45,18 @@ app.configure('development', function(){
 app.configure('production', function(){
 	console.log("production....");
 	app.use(express.errorHandler());
-	mongoclient = mongodb.db(process.env.MONGOHQ_URL);
+	mongoclient = mongodb.db(process.env.MONGOHQ_URL, function(err){
+		
+	});
+	mongoclient.open(function( err, client){
+		if(err){
+			console.log(err);
+		}else{
+			console.log("connected to mongodb");
+		}
+	});
 });
 
-mongoclient.open(function( err, client){
-	if(err){
-		console.log(err);
-	}else{
-		console.log("connected to mongodb");
-	}
-});
 
 app.get('/', routes.index);
 app.get('/:userid', routes.user(mongoclient));
