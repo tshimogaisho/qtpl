@@ -30,6 +30,7 @@ app.configure('development', function(){
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));  
   mongoclient = new mongodb.Db('qtpl', 
 		  new mongodb.Server("127.0.0.1", 27017, {}), {});
+
 });
 
 mongoclient.open(function( err, client){
@@ -41,8 +42,9 @@ mongoclient.open(function( err, client){
 });
 
 app.configure('production', function(){
+	console.log("production....");
 	app.use(express.errorHandler());
-	mongoclient = mongo.db(process.env.MONGOHQ_URL);
+	mongoclient = mongodb.db(process.env.MONGOHQ_URL);
 });
 
 app.get('/', routes.index);
@@ -68,4 +70,4 @@ app.get('/:userid/testtpls', routes.testtpls);
 
 var port = process.env.PORT || 3000;
 app.listen(port);
-console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
+console.log("Express server listening on port %d in %s mode", port, app.settings.env);
