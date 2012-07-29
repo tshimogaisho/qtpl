@@ -56,15 +56,23 @@ app.configure('production', function(){
 			console.log(err);
 		}else{
 			console.log("connected to mongodb");
+			//test
+			var collection = new mongodb.Collection(mongoclient, 'tpl');
+			collection.findOne({},{},function(err, result){
+				if(err){
+					console.log("connection test. err: ", err);
+				}
+				console.log("connection test. result: ", result);
+			});
 		}
-		app.get('/:userid', routes.user(mongoclient));
+		
 	});	
 
 });
 
 
 app.get('/', routes.index);
-
+app.get('/:userid', routes.user(mongoclient));
 app.get('/:userid/tree', routes.tree("get", mongoclient));
 app.put('/:userid/tree', routes.tree("put", mongoclient));
 app.post('/:userid/tpl', routes.tpl("post", mongoclient));
