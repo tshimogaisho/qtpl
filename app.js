@@ -45,7 +45,7 @@ app.configure('development', function(){
 app.configure('production', function(){
 	console.log("production....");
 	app.use(express.errorHandler());
-
+	console.log(process.env.MONGOHQ_URL);
 	mongoclient = mongodb.db(process.env.MONGOHQ_URL, function(err){
 		if(err){
 			console.log(err);
