@@ -1,9 +1,9 @@
 exports.user = function(mongoclient){
 	return function(req, res){
-		console.log("user##");
 		var userid = req.param("userid");
 		mongoclient.collection("user", function(error, collection) {
 			collection.findOne({"userid": userid}, {}, function(err, result){
+				console.log("result", result);
 				if(err) console.log(err);
 				if(!result){
 					res.send('Sorry, cant find that', 404);
