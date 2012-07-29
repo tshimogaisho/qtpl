@@ -1,5 +1,6 @@
 exports.user = function(mongoclient){
 	return function(req, res){
+		console.log("user##");
 		var userid = req.param("userid");
 		mongoclient.collection("user", function(error, collection) {
 			collection.findOne({"userid": userid}, {}, function(err, result){
