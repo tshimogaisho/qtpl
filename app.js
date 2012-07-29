@@ -46,7 +46,7 @@ app.configure('production', function(){
 	console.log("production....");
 	app.use(express.errorHandler());
 	console.log(process.env.MONGOHQ_URL);
-	mongoclient = mongodb.db(process.env.MONGOHQ_URL, function(err){
+	mongoclient = mongodb.db("mongodb://heroku:herokumongo@flame.mongohq.com:27031/app4012201", function(err){
 		if(err){
 			console.log(err);
 		}
