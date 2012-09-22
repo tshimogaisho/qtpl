@@ -12,9 +12,6 @@ var app = module.exports = express.createServer();
 
 var mongoclient;
 
-
-
-
 app.configure('development', function(){
 	app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));  
 	app.use(express.errorHandler());
@@ -24,8 +21,6 @@ app.configure('development', function(){
 
 app.configure('production', function(){
 	app.use(express.errorHandler());
-
-
 	mongoclient = mongodb.db("mongodb://heroku:herokumongo@flame.mongohq.com:27031/app4012201", function(err){
 		if(err){
 			console.log(err);
@@ -43,7 +38,7 @@ app.configure(function(){
 	app.use(express.bodyParser());
 	app.use(express.methodOverride());
 	app.use(express.bodyParser());
-	app.use(app.router);
+		
 	app.use(express.static(__dirname + '/public'));
 	app.use(express.favicon(__dirname + '/public/ico/favicon.ico', {
 	maxAge: 2592000000
